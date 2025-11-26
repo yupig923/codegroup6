@@ -37,7 +37,7 @@ CaSOI = -3.2;
 % Write a function [V] = CylinderVolume(Ca,Cyl) that will give you Volume
 % for the given Cyl geometry. If you can do that you can create pV-diagrams
 %% Load data (if txt file)
-FullName        = fullfile('Data','ExampleDataSet.txt');
+FullName        = fullfile('Data','Example','ExampleDataSet.txt');
 dataIn          = table2array(readtable(FullName));
 [Nrows,Ncols]   = size(dataIn);                    % Determine size of array
 NdatapointsperCycle = 720/0.2;                     % Nrows is a multitude of NdatapointsperCycle
@@ -59,7 +59,7 @@ set(gca,'XTick',[-360:60:360],'XGrid','on','YGrid','on');        % I like specif
 title('All cycles in one plot.')
 
 %% pV-diagram using Modified Cosine (Linear Scale)
-[~,V] = CylinderVolume(Ca(:,iselect),Cyl);  % Only use modified cosine (second output)
+[V] = CylinderVolume(Ca(:,iselect),Cyl);  % Only use modified cosine (second output)
 
 f2 = figure(2);
 plot(V/dm^3,p(:,iselect)/bara,"Color","#00B4D8");
@@ -114,7 +114,7 @@ W_net_all = zeros(1, Ncycles);
 
 % Calculate work for each cycle
 for i = 1:Ncycles
-    [~, V_cycle] = CylinderVolume(Ca(:,i), Cyl);
+    [V_cycle] = CylinderVolume(Ca(:,i), Cyl);
     W_net_all(i) = trapz(V_cycle, p(:,i));
 end
 

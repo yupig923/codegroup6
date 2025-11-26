@@ -37,7 +37,7 @@ CaSOI = -3.2;
 % Write a function [V] = CylinderVolume(Ca,Cyl) that will give you Volume
 % for the given Cyl geometry. If you can do that you can create pV-diagrams
 %% Load data (if txt file)
-FullName        = fullfile('Data','ExampleDataSet.txt');
+FullName        = fullfile('Data','Example','ExampleDataSet.txt');
 dataIn          = table2array(readtable(FullName));
 [Nrows,Ncols]   = size(dataIn);                    % Determine size of array
 NdatapointsperCycle = 720/0.2;                     % Nrows is a multitude of NdatapointsperCycle
