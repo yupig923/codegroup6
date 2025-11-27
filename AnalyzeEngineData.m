@@ -7,6 +7,7 @@
 %% init
 clear all; clc;close all;
 addpath( "Functions","Nasa");
+
 %% Units
 mm      = 1e-3;dm=0.1;
 bara    = 1e5;
@@ -16,6 +17,7 @@ volperc = 0.01; % Emissions are in volume percentages
 ppm     = 1e-6; % Some are in ppm (also a volume- not a mass-fraction)
 g       = 1e-3;
 s       = 1;
+
 %% Load NASA 
 % Global (for the Nasa database in case you wish to use it).
 global Runiv
@@ -27,6 +29,7 @@ Cyl.Stroke              = 85*mm;
 Cyl.CompressionRatio    = 21.5;
 Cyl.ConRod              = 136.5*mm;
 Cyl.TDCangle            = 180;
+
 % -- Valve closing events can sometimes be seen in fast oscillations in the pressure signal (due
 % to the impact when the Valve hits its seat).
 CaIVO = -355;
@@ -34,16 +37,18 @@ CaIVC = -135;
 CaEVO = 149;
 CaEVC = -344;
 CaSOI = -3.2;
+
 % Write a function [V] = CylinderVolume(Ca,Cyl) that will give you Volume
 % for the given Cyl geometry. If you can do that you can create pV-diagrams
 %% Load data (if txt file)
-FullName        = fullfile('Data','Example','ExampleDataSet.txt');
+FullName        = fullfile('Data','Example','20251120_0000001_example_fdaq.txt');
 dataIn          = table2array(readtable(FullName));
 [Nrows,Ncols]   = size(dataIn);                    % Determine size of array
 NdatapointsperCycle = 720/0.2;                     % Nrows is a multitude of NdatapointsperCycle
 Ncycles         = Nrows/NdatapointsperCycle;       % This must be an integer. If not checkwhat is going on
 Ca              = reshape(dataIn(:,1),[],Ncycles); % Both p and Ca are now matrices of size (NCa,Ncycles)
 p               = reshape(dataIn(:,2),[],Ncycles)*bara; % type 'help reshape' in the command window if you want to know what it does (reshape is a Matlab buit-in command
+
 %% Plotting 
 f1=figure(1);           
 pp = plot(Ca,p/bara,'LineWidth',1);                 % Plots the whole matrix
