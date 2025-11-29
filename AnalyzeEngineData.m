@@ -39,7 +39,7 @@ CaSOI = -3.2;
 Filename_fdaq = fullfile("Data","Example","20251120_0000001_example_fdaq.txt");
 Filename_sdaq = fullfile("Data","Example","20251120_0000001_example_sdaq.txt");
 
-data = Data_Extraction_pegfilter(Filename_fdaq, Filename_sdaq);
+data = Data_Extraction(Filename_fdaq, Filename_sdaq);
 
 % Extract all the pressure-related data
 Ca      = data.Ca;          % crank angle [deg]
@@ -73,28 +73,9 @@ line([CaEVO CaEVO], YLIM, 'LineWidth',1,'Color','r');
 set(gca,'XTick',-360:60:360,'XGrid','on','YGrid','on');
 title("All cycles (excluding first)");
 
-%% pV-diagram (linear)
-[V] = CylinderVolume(Ca(:,iselect), Cyl);
-
-figure(2);
-plot(V/dm^3, p(:,iselect)/bara,"Color","#00B4D8");
-xlabel('V [dm^3]'); ylabel('p [bar]');
-xlim([0 0.8]); ylim([0.5 70]);
-set(gca,'XTick',0:0.1:0.8,'XGrid','on','YGrid','on');
-title('pV-diagram (Modified Cosine) - Linear');
-
-%% pV-diagram (log)
-figure(3);
-loglog(V/dm^3, p(:,iselect)/bara,"Color","#00B4D8");
-xlabel('V [dm^3] (log)'); ylabel('p [bar] (log)');
-xlim([0.02 0.8]); ylim([0.5 70]);
-set(gca,'XTick',[0.02 0.05 0.1 0.2 0.5 0.8],...
-        'YTick',[0.5 1 2 5 10 20 50],...
-        'XGrid','on','YGrid','on');
-title('pV-diagram (Modified Cosine) - Log');
-
 %% Work for selected cycle
-W_net = trapz(V, p(:,iselect));
+[V] = CylinderVolume(Ca(:,iselect), Cyl);
+W_net = trapz(V, p_peg(:,iselect));
 
 fprintf('\n=== Work Calculation for Cycle %d ===\n', iselect+1);
 fprintf('Net work: %.2f J\n', W_net);
@@ -102,7 +83,7 @@ fprintf('Net work: %.3f kJ\n', W_net/1000);
 
 %% Visualize work area
 figure(4);
-fill(V/dm^3, p(:,iselect)/bara, [0 0.7 0.85], ...
+fill(V/dm^3, p_peg(:,iselect)/bara, [0 0.7 0.85], ...
      'FaceAlpha',0.3,'EdgeColor',[0 0.7 0.85],'LineWidth',2);
 xlabel('V [dm^3]'); ylabel('p [bar]');
 xlim([0 0.8]); ylim([0.5 70]);
