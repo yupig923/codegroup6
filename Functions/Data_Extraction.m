@@ -52,7 +52,7 @@ Ca = data.Ca;
 p  = data.p;
 
 % TDC is defined as 0 deg
-TDCangle = 0;          
+TDCangle = 180;          
 BDC_angle = TDCangle + 180; 
 
 % find BDC index in the crank-angle array

@@ -75,7 +75,7 @@ title("All cycles (excluding first)");
 
 %% Work for selected cycle
 [V] = CylinderVolume(Ca(:,iselect), Cyl);
-W_net = trapz(V, p_peg(:,iselect));
+W_net = trapz(V, p_raw(:,iselect));
 
 fprintf('\n=== Work Calculation for Cycle %d ===\n', iselect+1);
 fprintf('Net work: %.2f J\n', W_net);
