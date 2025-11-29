@@ -35,14 +35,21 @@ CaEVO = 149;
 CaEVC = -344;
 CaSOI = -3.2;
 
-%% Load data using Data_Extraction
+%% Load data using Data_Extraction_pf
 Filename_fdaq = fullfile("Data","Example","20251120_0000001_example_fdaq.txt");
 Filename_sdaq = fullfile("Data","Example","20251120_0000001_example_sdaq.txt");
 
-data = Data_Extraction(Filename_fdaq, Filename_sdaq);
+data = Data_Extraction_pegfilter(Filename_fdaq, Filename_sdaq);
 
-Ca = data.Ca;
-p  = data.p;
+% Extract all the pressure-related data
+Ca      = data.Ca;          % crank angle [deg]
+p_raw   = data.p;           % unpegged pressure [Pa]
+p_peg   = data.p_pegged;    % pegged pressure [Pa]
+p_avg   = data.p_avg;       % averaged pegged pressure [Pa]
+p_filt  = data.p_filt;      % filtered avg pressure [Pa]
+
+% Use the pegged pressure for cycle analysis
+p = p_peg;
 
 [~, Ncycles_total] = size(Ca);
 

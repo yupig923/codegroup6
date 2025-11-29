@@ -1,4 +1,4 @@
-function [data] = Data_Extraction(Filename_fdaq,Filename_sdaq)
+function [data] = Data_Extraction_pf(Filename_fdaq,Filename_sdaq)
 % This function extracts the data from the files
 % 
 % Input:
