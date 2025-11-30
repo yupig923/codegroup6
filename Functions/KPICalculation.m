@@ -17,7 +17,7 @@ O2_molarmass = 32;
 NOx_molarmass = 46; % this is an approximation
 AIR_molarmass = 29; % this is an approximation
 
-gperJ_to_gperkWh = 3600000;
+gperJ_to_gperkWh = 3600*1000;
 
 % Find the Volume 
 Actual_AFR = emissions.lambda*AFR_sto;
