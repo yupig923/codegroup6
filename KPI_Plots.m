@@ -77,4 +77,35 @@ title("Brake Specific CO emission over the Load")
 xlim([0,100])
 ylim([0,max([BSem.BSCO])*1.2])
 
+%3D Scatter Plot
+figure;
+scatter3(Load, Ca_exp, [BSem.BSCO2], "filled")
+grid on
+xlabel("Load [%]")
+ylabel("CA [°]")
+zlabel("Brake Specific CO₂ [g/kWh]")
+title("Brake Specific CO₂ Emission over Load and CA")
+xlim([0 100])
 
+%Add intermediate Values for Mesh Plot
+F = scatteredInterpolant(Load, Ca_exp, [BSem.BSCO2], 'natural', 'none');
+figure;
+% Create meshgrid for surface
+xq = linspace(min(Load), max(Load), 50);
+yq = linspace(min(Ca_exp), max(Ca_exp), 50);
+[Xq, Yq] = meshgrid(xq, yq);
+Zq = F(Xq, Yq);
+
+% Mesh Plot 
+
+surf(Xq, Yq, Zq, 'EdgeColor', 'none', 'FaceAlpha', 0.85)
+hold on
+scatter3(Load, Ca_exp, [BSem.BSCO2], 70, 'filled', 'MarkerEdgeColor', 'k')
+hold off
+
+grid on
+xlabel("Load [%]")
+ylabel("CA [°]")
+zlabel("Brake Specific CO₂ [g/kWh]")
+title("Interpolated Brake Specific CO₂ Surface")
+colorbar
