@@ -42,7 +42,7 @@ data.Fuel_massflow   = dataIn_sdaq(1,:); % Total Mass flow of the fuel in that c
 data.Intake_Temp     = dataIn_sdaq(2,:); % Intake Temperature
 data.Exhaust_Temp    = dataIn_sdaq(3,:); % Exhaust Temperature
 data.Intake_p        = dataIn_sdaq(4,:); % Intake Pressure
-
+data.AVG_fuel_m_flow = mean(data.Fuel_massflow); % Average Mass flow of the fuel in that cycle
 
 % =========================== Pegging ===========================
 % convert intake pressure to Pa:
