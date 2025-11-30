@@ -1,0 +1,101 @@
+%% Process all .txt files in Data/HVO
+fuel = 'HVO';
+folder = fullfile('Data',fuel);
+files = dir(fullfile(folder, '*fdaq.txt'));
+
+% Initialize arrays
+FileName = strings(length(files),1);   % N×1 string vector
+WnetAvg  = zeros(length(files),1);     % N×1 double vector
+WnetStd  = zeros(length(files),1);
+WnetCov  = zeros(length(files),1);
+PowerOut = zeros(length(files),1);
+
+for k = 1:length(files)
+    FullName = fullfile(files(k).folder, files(k).name);
+
+    fprintf('\n======================================================\n');
+    fprintf('Processing file: %s\n', files(k).name);
+    fprintf('======================================================\n');
+
+    % Run the work & power calculation on this file
+    [avgWork, stdWork, covWork, power] = CalculateWorkAndPower(FullName);
+
+    % Store in results arrays
+    FileName(k) = string(files(k).name);
+    WnetAvg(k)  = avgWork;
+    WnetStd(k)  = stdWork;
+    WnetCov(k)  = covWork;
+    PowerOut(k) = power;
+
+end
+
+% Create table
+Results = table(FileName, WnetAvg, WnetStd, WnetCov, PowerOut);
+
+disp(' ');
+disp('====================== FINAL RESULTS TABLE ======================');
+disp(Results);
+
+function [W_net_avg, W_net_std, W_net_cov, power] = CalculateWorkAndPower(FullName)
+%% Init
+addpath("Functions","Nasa");
+
+%% Units
+mm      = 1e-3; dm=0.1;
+bara    = 1e5;
+MJ      = 1e6;
+kWhr    = 1000*3600;
+volperc = 0.01;
+ppm     = 1e-6;
+g       = 1e-3;
+s       = 1;
+
+%% Load NASA
+global Runiv
+Runiv = 8.314;
+[SpS,El] = myload('Nasa/NasaThermalDatabase.mat',...
+    {'Diesel','O2','N2','CO2','H2O'});
+
+%% Engine geometry
+Cyl.Bore             = 104*mm;
+Cyl.Stroke           = 85*mm;
+Cyl.CompressionRatio = 21.5;
+Cyl.ConRod           = 136.5*mm;
+Cyl.TDCangle         = 180;
+
+%% Load data from file
+dataIn = table2array(readtable(FullName));
+[Nrows,~] = size(dataIn);
+
+NdatapointsperCycle = 720/0.2;
+Ncycles = Nrows / NdatapointsperCycle;
+
+Ca = reshape(dataIn(:,1),[],Ncycles);
+p  = reshape(dataIn(:,2),[],Ncycles) * bara;
+
+%% Calculate Work for ALL cycles
+W_net_all = zeros(1, Ncycles);
+
+for i = 1:Ncycles
+    V_cycle = CylinderVolume(Ca(:,i), Cyl);
+    W_net_all(i) = trapz(V_cycle, p(:,i));
+end
+
+%% Stats
+W_net_avg = mean(W_net_all);
+W_net_std = std(W_net_all);
+W_net_cov = (W_net_std / W_net_avg) * 100;
+
+RPM = 1500;
+cycles_per_second = RPM / (2 * 60);
+power = W_net_avg * cycles_per_second;
+
+%% Print results
+fprintf('Average net work per cycle: %.2f J\n', W_net_avg);
+fprintf('Standard deviation: %.2f J\n', W_net_std);
+fprintf('Coefficient of variation: %.1f%%\n', W_net_cov);
+fprintf('Minimum work: %.2f J\n', min(W_net_all));
+fprintf('Maximum work: %.2f J\n', max(W_net_all));
+fprintf('Power: %.2f W\n', power);
+
+end
