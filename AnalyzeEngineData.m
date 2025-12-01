@@ -43,29 +43,28 @@ data = Data_Extraction(Filename_fdaq, Filename_sdaq);
 
 % Extract all the pressure-related data
 Ca      = data.Ca;          % crank angle [deg]
+Ca_avg  = data.Ca_avg;
 p_raw   = data.p;           % unpegged pressure [Pa]
 p_peg   = data.p_pegged;    % pegged pressure [Pa]
 p_avg   = data.p_avg;       % averaged pegged pressure [Pa]
 p_filt  = data.p_filt;      % filtered avg pressure [Pa]
 
-% Use the pegged pressure for cycle analysis
-p = p_peg;
-
 [~, Ncycles_total] = size(Ca);
 
 %% Skip first cycle
 Ca = Ca(:,2:end);
-p  = p(:,2:end);
+p_peg  = p_peg(:,2:end);
+p_raw  = p_raw(:,2:end);
 Ncycles = Ncycles_total - 1;
 
 fprintf('Skipping first cycle. Using cycles 2 to %d for analysis.\n', Ncycles+1);
 
 %% Plotting all cycles
 figure(1);
-plot(Ca, p/bara, 'LineWidth', 1);
+plot(Ca, p_peg/bara, 'LineWidth', 1);
 xlabel('Ca'); ylabel('p [bar]');
 xlim([-360 360]); ylim([0 70]);
-iselect = min(10, Ncycles);
+iselect = min(69, Ncycles);
 YLIM = ylim;
 
 line([CaIVC CaIVC], YLIM, 'LineWidth',1,'Color','b');
@@ -75,10 +74,12 @@ title("All cycles (excluding first)");
 
 %% Work for selected cycle
 [V] = CylinderVolume(Ca(:,iselect), Cyl);
-W_net = trapz(V, p_raw(:,iselect));
+W_net = trapz(V, p_peg(:,iselect));
+W_net1 = trapz(V, p_raw(:,iselect));
 
 fprintf('\n=== Work Calculation for Cycle %d ===\n', iselect+1);
 fprintf('Net work: %.2f J\n', W_net);
+fprintf('Net work (raw): %.2f J\n', W_net1);
 fprintf('Net work: %.3f kJ\n', W_net/1000);
 
 %% Visualize work area
@@ -93,9 +94,19 @@ legend('Enclosed area = Work','Location','northeast');
 
 %% Work calculation for ALL cycles
 RPM = 1500;
-workResults = CalculateWorkAndPower(Ca, p, Cyl);
+workResults = CalculateWorkAndPower(Ca, p_peg, Cyl);
+
+Ap = pi*(Cyl.Bore/2)^2;
+Vd = Ap * Cyl.Stroke;
+V = CylinderVolume(Ca_avg, Cyl);
+
+theta = deg2rad(Ca_avg);
+dVdtheta = gradient(V, theta);
+
+W_filt = trapz(theta, p_filt.* dVdtheta);
 
 fprintf('\n=== Work Calculation for ALL %d Cycles ===\n', Ncycles);
+fprintf('Avg net work using filtered p: %.2f J\n', W_filt);
 fprintf('Avg net work: %.2f J\n', workResults.W_net_avg);
 fprintf('Std: %.2f J\n', workResults.W_net_std);
 fprintf('Cov: %.1f%%\n', workResults.W_net_cov);

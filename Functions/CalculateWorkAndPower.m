@@ -1,4 +1,4 @@
-function workResults = CalculateWorkAndPower(Ca, p, Cyl)
+function workResults = CalculateWorkAndPower(Ca, p_peg, Cyl)
 % CalculateWorkAndPower
 % Computes net cycle work for each cycle and engine power.
 %
@@ -32,7 +32,7 @@ W_net_all = zeros(1, Ncycles);
 %% Compute work for each cycle
 for i = 1:Ncycles
     V_cycle = CylinderVolume(Ca(:,i), Cyl);
-    W_net_all(i) = trapz(V_cycle, p(:,i));
+    W_net_all(i) = trapz(V_cycle, p_peg(:,i));
 end
 
 %% Statistics
