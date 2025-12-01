@@ -1,4 +1,4 @@
-function [BSem] = KPICalculation(emissions,AFR_sto,FUEL_m_flow,Energy_per_cycle)
+function [BSem] = KPICalculation(emissions,AFR_sto,FUEL_m_flow,Power)
 % This Function calculates the Brake Specific Emissions
 % - Input:
 %   - emissions: Struct will the needed data
@@ -31,10 +31,10 @@ CO2_m_flow = (CO2_molarmass * emissions.CO2 * Exhaust_mass_flow)/AIR_molarmass;
 NOx_m_flow = (NOx_molarmass * emissions.NOx * Exhaust_mass_flow)/AIR_molarmass;
 
 BSem = struct();
-BSem.BSFC  =FUEL_m_flow*gperJ_to_gperkWh/Energy_per_cycle;
-BSem.BSCO  =  CO_m_flow*gperJ_to_gperkWh/Energy_per_cycle;
-BSem.BSCO2 = CO2_m_flow*gperJ_to_gperkWh/Energy_per_cycle;
-BSem.BSHC  =  HC_m_flow*gperJ_to_gperkWh/Energy_per_cycle;
-BSem.BSO2  =  O2_m_flow*gperJ_to_gperkWh/Energy_per_cycle;
-BSem.BSNOx = NOx_m_flow*gperJ_to_gperkWh/Energy_per_cycle;
+BSem.BSFC  =FUEL_m_flow*gperJ_to_gperkWh/Power;
+BSem.BSCO  =  CO_m_flow*gperJ_to_gperkWh/Power;
+BSem.BSCO2 = CO2_m_flow*gperJ_to_gperkWh/Power;
+BSem.BSHC  =  HC_m_flow*gperJ_to_gperkWh/Power;
+BSem.BSO2  =  O2_m_flow*gperJ_to_gperkWh/Power;
+BSem.BSNOx = NOx_m_flow*gperJ_to_gperkWh/Power;
 end
