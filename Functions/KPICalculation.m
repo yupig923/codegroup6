@@ -21,14 +21,14 @@ gperJ_to_gperkWh = 3600*1000;
 
 % Find the Volume 
 Actual_AFR = emissions.lambda*AFR_sto;
-AIR_mass_flow = Actual_AFR*FUEL_m_flow;
+Exhaust_mass_flow = (Actual_AFR+1)*FUEL_m_flow;
 
 % Convert to Mass Flow
- CO_m_flow = ( CO_molarmass * emissions.CO  * AIR_mass_flow)/AIR_molarmass;
-CO2_m_flow = (CO2_molarmass * emissions.CO2 * AIR_mass_flow)/AIR_molarmass;
- HC_m_flow = ( HC_molarmass * emissions.HC  * AIR_mass_flow)/AIR_molarmass;
- O2_m_flow = ( O2_molarmass * emissions.O2  * AIR_mass_flow)/AIR_molarmass;
-NOx_m_flow = (NOx_molarmass * emissions.NOx * AIR_mass_flow)/AIR_molarmass;
+ CO_m_flow = ( CO_molarmass * emissions.CO  * Exhaust_mass_flow)/AIR_molarmass;
+CO2_m_flow = (CO2_molarmass * emissions.CO2 * Exhaust_mass_flow)/AIR_molarmass;
+ HC_m_flow = ( HC_molarmass * emissions.HC  * Exhaust_mass_flow)/AIR_molarmass;
+ O2_m_flow = ( O2_molarmass * emissions.O2  * Exhaust_mass_flow)/AIR_molarmass;
+NOx_m_flow = (NOx_molarmass * emissions.NOx * Exhaust_mass_flow)/AIR_molarmass;
 
 BSem = struct();
 BSem.BSFC  =FUEL_m_flow*gperJ_to_gperkWh/Energy_per_cycle;
