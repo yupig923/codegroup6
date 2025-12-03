@@ -22,11 +22,8 @@ Readfile_results=AutoReadFilesFromFuels(fuel);
 Load=Readfile_results.P_vals;
 Ca_exp=Readfile_results.CA_vals;
 
-fdaq_data_name  =[Readfile_results.fastfiles.relpath]
-sdaq_data_name  = [Readfile_results.slowfiles.relpath]
-
-% Giving measurements a name
-name = ["Diesel_30L_14Ca","Diesel_50L_14Ca","Diesel_70L_14Ca"];
+fdaq_data_name  =[Readfile_results.fastfiles.relpath];
+sdaq_data_name  = [Readfile_results.slowfiles.relpath];
 
 % Emission data
 emissions_30L_14Ca_Diesel = struct();
@@ -54,17 +51,20 @@ emissions_70L_14Ca.NOx = 1135  *ppm;
 emissions_70L_14Ca.lambda = 4.508;
 
 emissions_diesel = [emissions_30L_14Ca_Diesel,emissions_50L_14Ca,emissions_70L_14Ca];
-diesel_AFR_sto = 14.5;
+
+AFR_sto_filename = 'Data/AFR_sto.xlsx';
+AFR_sto_data = readtable(AFR_sto_filename);
+fuel_specfic_AFR_sto = AFR_sto_data.(fuel);
 
 % Actual Calculation
 
 BSem = [];
 
-for i=1:length(name)
+for i=1:length(fdaq_data_name)
 
     Current_Raw_data = Data_Extraction(fdaq_data_name(i),sdaq_data_name(i));
     Current_Power_data = CalculateWorkAndPower(Current_Raw_data.Ca,Current_Raw_data.p,Cyl);
-    Current_BSem = KPICalculation(emissions_diesel(i),diesel_AFR_sto,Current_Raw_data.AVG_fuel_m_flow,Current_Power_data.power);
+    Current_BSem = KPICalculation(emissions_diesel(i),fuel_specfic_AFR_sto,Current_Raw_data.AVG_fuel_m_flow,Current_Power_data.power);
     
     BSem = [BSem, Current_BSem];
 end    
