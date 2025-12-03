@@ -61,7 +61,7 @@ for i=1:length(name)
 
     Current_Raw_data = Data_Extraction(fdaq_data_name(i),sdaq_data_name(i));
     Current_Power_data = CalculateWorkAndPower(Current_Raw_data.Ca,Current_Raw_data.p,Cyl);
-    Current_BSem = KPICalculation(emissions_diesel(i),diesel_AFR_sto,Current_Raw_data.AVG_fuel_m_flow,Current_Power_data.W_net_avg);
+    Current_BSem = KPICalculation(emissions_diesel(i),diesel_AFR_sto,Current_Raw_data.AVG_fuel_m_flow,Current_Power_data.power);
     
     BSem = [BSem, Current_BSem];
 end    
@@ -69,13 +69,13 @@ end
 %% Plotting Example
 
 figure;
-plot(Load,[BSem.BSCO],"Marker","o","LineStyle","-")
+plot(Load,[BSem.BSCO2],"Marker","o","LineStyle","-")
 grid on
 xlabel("Load [%]")
-ylabel("Brake Specific CO [g/kwh]")
-title("Brake Specific CO emission over the Load")
+ylabel("Brake Specific CO2 [g/kwh]")
+title("Brake Specific CO2 emission over the Load")
 xlim([0,100])
-ylim([0,max([BSem.BSCO])*1.2])
+ylim([0,max([BSem.BSCO2])*1.2])
 
 %3D Scatter Plot
 figure;
