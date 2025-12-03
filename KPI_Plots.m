@@ -16,14 +16,17 @@ Cyl.ConRod              = 136.5*mm;
 Cyl.TDCangle            = 180;
 
 %% Actual Code
-% Defining which Files to use
-fdaq_data_name  = ["Data\Diesel\20251124_0000002_Measurement 30% 14CA_fdaq.txt","Data\Diesel\20251124_0000003_Measurement 50% 14CA_fdaq.txt","Data\Diesel\20251124_0000004_Measurement 70% 14CA_fdaq.txt"];
-sdaq_data_name  = ["Data\Diesel\20251124_0000002_Measurement 30% 14CA_sdaq.txt","Data\Diesel\20251124_0000003_Measurement 50% 14CA_sdaq.txt","Data\Diesel\20251124_0000004_Measurement 70% 14CA_sdaq.txt"];
+% Defining which Fuel to use
+fuel="Diesel"
+Readfile_results=AutoReadFilesFromFuels(fuel);
+Load=Readfile_results.P_vals;
+Ca_exp=Readfile_results.CA_vals;
+
+fdaq_data_name  =[Readfile_results.fastfiles.relpath]
+sdaq_data_name  = [Readfile_results.slowfiles.relpath]
 
 % Giving measurements a name
 name = ["Diesel_30L_14Ca","Diesel_50L_14Ca","Diesel_70L_14Ca"];
-Load = [30               ,50               ,70];
-Ca_exp=[14               ,14               ,14];
 
 % Emission data
 emissions_30L_14Ca_Diesel = struct();
