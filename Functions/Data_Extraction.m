@@ -67,8 +67,8 @@ end
 
 % store in struct
 data.p_pegged = p_pegged;       
-data.p_avg    = mean(p_pegged(:, 2:end), 2);
-data.Ca_avg   = Ca(:,1);        % first cycle crank-angle vector
+data.p_avg    = mean(p_pegged(:, 2:end), 2);   %skip first cycle
+data.Ca_avg   = Ca(:,1);     
 
 
 % =========================== Filtering ===========================
