@@ -7,3 +7,4 @@ IMEP = W / Vd;                      % [Pa]
 eta_b = P_b / (m_dot_f * LHV);
 
 bsfc = (m_dot_f*1000) / (P_b/1000) * 3600;   % g/kWh
+% Brakes Specific Fuel Comsumption has already been done (the line above)

@@ -1,3 +1,4 @@
+clear all; clc;close all;
 %% Process all .txt files in Data/HVO
 fuel = 'HVO';
 folder = fullfile('Data',fuel);
