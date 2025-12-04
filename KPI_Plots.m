@@ -39,7 +39,7 @@ for i=1:length(fdaq_data_name)
 
     Current_Raw_data = Data_Extraction(fdaq_data_name(i),sdaq_data_name(i));
     Current_Power_data = CalculateWorkAndPower(Current_Raw_data.Ca,Current_Raw_data.p,Cyl);
-    Current_BSem = KPICalculation(emissions_fuel(i),fuel_specfic_AFR_sto,Current_Raw_data.AVG_fuel_m_flow,Current_Power_data.power);
+    Current_BSem = KPICalculation(emissions_fuel(i),fuel_specfic_AFR_sto,Current_Raw_data.AVG_fuel_m_flow,Current_Power_data.power,fuel);
     
     BSem = [BSem, Current_BSem];
 end    
