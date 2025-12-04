@@ -25,32 +25,7 @@ Ca_exp=Readfile_results.CA_vals;
 fdaq_data_name  =[Readfile_results.fastfiles.relpath];
 sdaq_data_name  = [Readfile_results.slowfiles.relpath];
 
-% Emission data
-emissions_30L_14Ca_Diesel = struct();
-emissions_30L_14Ca_Diesel.CO  = 0.04  *volperc;
-emissions_30L_14Ca_Diesel.CO2 = 1.61  *volperc;
-emissions_30L_14Ca_Diesel.HC  = 9*10  *ppm;
-emissions_30L_14Ca_Diesel.O2  = 18.54 *volperc;
-emissions_30L_14Ca_Diesel.NOx = 203   *ppm;
-emissions_30L_14Ca_Diesel.lambda = 8.634;
-
-emissions_50L_14Ca = struct();
-emissions_50L_14Ca.CO  = 0.04  *volperc;
-emissions_50L_14Ca.CO2 = 2.45  *volperc;
-emissions_50L_14Ca.HC  = 10*10 *ppm;
-emissions_50L_14Ca.O2  = 17.54 *volperc;
-emissions_50L_14Ca.NOx = 527   *ppm;
-emissions_50L_14Ca.lambda = 5.789;
-
-emissions_70L_14Ca = struct();
-emissions_70L_14Ca.CO  = 0.02  *volperc;
-emissions_70L_14Ca.CO2 = 3.17  *volperc;
-emissions_70L_14Ca.HC  = 5*10  *ppm;
-emissions_70L_14Ca.O2  = 16.42 *volperc;
-emissions_70L_14Ca.NOx = 1135  *ppm;
-emissions_70L_14Ca.lambda = 4.508;
-
-emissions_diesel = [emissions_30L_14Ca_Diesel,emissions_50L_14Ca,emissions_70L_14Ca];
+emissions_fuel=ReadEmissionsData(fuel);
 
 AFR_sto_filename = 'Data/AFR_sto.xlsx';
 AFR_sto_data = readtable(AFR_sto_filename);
@@ -64,7 +39,7 @@ for i=1:length(fdaq_data_name)
 
     Current_Raw_data = Data_Extraction(fdaq_data_name(i),sdaq_data_name(i));
     Current_Power_data = CalculateWorkAndPower(Current_Raw_data.Ca,Current_Raw_data.p,Cyl);
-    Current_BSem = KPICalculation(emissions_diesel(i),fuel_specfic_AFR_sto,Current_Raw_data.AVG_fuel_m_flow,Current_Power_data.power);
+    Current_BSem = KPICalculation(emissions_fuel(i),fuel_specfic_AFR_sto,Current_Raw_data.AVG_fuel_m_flow,Current_Power_data.power);
     
     BSem = [BSem, Current_BSem];
 end    
