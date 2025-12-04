@@ -102,26 +102,33 @@ for i = 1:Ncycles
     W_net_all(i) = trapz(V_cycle, p(:,i));
 end
 
-%% Stats
-W_net_avg = mean(W_net_all);
-W_net_std = std(W_net_all);
+%% REMOVE FIRST CYCLE FROM CALCULATIONS
+if Ncycles > 1
+    W_net_used = W_net_all(2:end);   % <--- ignore first cycle
+else
+    warning('Only one cycle in file - using it by default');
+    W_net_used = W_net_all;
+end
+
+%% Stats (use W_net_used instead of W_net_all)
+W_net_avg = mean(W_net_used);
+W_net_std = std(W_net_used);
 W_net_cov = (W_net_std / W_net_avg) * 100;
 
 RPM = 1500;
 cycles_per_second = RPM / (2 * 60);
 power = W_net_avg * cycles_per_second;
 
-minWork = min(W_net_all);
-maxWork = max(W_net_all);
+minWork = min(W_net_used);
+maxWork = max(W_net_used);
 
 %% Print results
-fprintf('Average net work per cycle: %.2f J\n', W_net_avg);
+fprintf('Average net work per cycle (excluding 1st): %.2f J\n', W_net_avg);
 fprintf('Standard deviation: %.2f J\n', W_net_std);
 fprintf('Coefficient of variation: %.1f%%\n', W_net_cov);
 fprintf('Minimum work: %.2f J\n', minWork);
 fprintf('Maximum work: %.2f J\n', maxWork);
 fprintf('Power: %.2f W\n', power);
-
 end
 
 
