@@ -1,3 +1,4 @@
+clear all; clc;close all;
 %% Process all .txt files in Data/HVO
 fuel = 'HVO';
 folder = fullfile('Data',fuel);
@@ -129,8 +130,8 @@ fprintf('Coefficient of variation: %.1f%%\n', W_net_cov);
 fprintf('Minimum work: %.2f J\n', minWork);
 fprintf('Maximum work: %.2f J\n', maxWork);
 fprintf('Power: %.2f W\n', power);
-
 end
+
 
 %% --- Plotting results ---
 
