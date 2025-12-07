@@ -136,7 +136,7 @@ end
 %% --- Plotting results ---
 
 uniqueP = unique(Results.Percentage); % all unique percentages
-figure('Color','w');
+figure('Color','black');
 
 % --- Plot Net Work ---
 subplot(2,2,1);
