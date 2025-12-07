@@ -66,11 +66,11 @@ title("Brake Specific CO₂ Emission over Load and CA")
 xlim([0 100])
 
 %Add intermediate Values for Mesh Plot
-F = scatteredInterpolant(Load, Ca_exp, [BSem.BSCO2], 'natural', 'none');
+F = scatteredInterpolant(Load, Ca_exp, [BSem.BSCO2]', 'natural', 'none');
 figure;
 % Create meshgrid for surface
-xq = linspace(min(Load), max(Load), 50);
-yq = linspace(min(Ca_exp), max(Ca_exp), 50);
+xq = linspace(0, 75, 5);
+yq = linspace(0, 20, 0.5);
 [Xq, Yq] = meshgrid(xq, yq);
 Zq = F(Xq, Yq);
 
