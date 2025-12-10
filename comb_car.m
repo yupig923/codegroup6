@@ -8,7 +8,7 @@ Cyl.CompressionRatio = 21.5;
 Cyl.ConRod           = 136.5*mm;
 Cyl.TDCangle         = 180;
 
-fuel = 'GTL'; % Select the fuel you want to analyse
+fuel = 'HVO'; % Select the fuel you want to analyse
 iselect = 10; % Select which cycle you want to analyse
 
 % Add paths
@@ -23,60 +23,150 @@ files_sdaq = dir(fullfile(folder, '*sdaq.txt'));
 
 nFiles = min(length(files_fdaq), length(files_sdaq));
 
+CA_list = zeros(nFiles,1);
 
-%plot all the experiments only for 1 cycle otherwise to messy
+for k = 1:nFiles
+    fname = files_fdaq(k).name;
+
+    CA_pos = strfind(fname, 'CA');
+    CA_power_str = fname(CA_pos:end);
+
+    CA_num = str2double(extractBetween(CA_power_str, 'CA', '-'));
+    CA_list(k) = CA_num;
+end
+
+% Sort files based on CA
+[~, sortIdx] = sort(CA_list);
+
+% Reorder both fdaq and sdaq files in the same order
+files_fdaq = files_fdaq(sortIdx);
+files_sdaq = files_sdaq(sortIdx);
+
+figure(1); clf; hold on
+title('apparent Rate Of Heat Release vs Crank Angle'); xlabel('CA [deg]'); ylabel('aROHR [J/deg]');
+xlim([-15 40]); grid on
+
+figure(2); clf; hold on
+title('apparent Heat Release vs Crank Angle'); xlabel('CA [deg]'); ylabel('aHR [J]');
+xlim([-15 40]); grid on
+
+figure(3); clf; hold on
+title('apparent Rate Of Heat Release vs Crank Angle'); xlabel('CA [deg]'); ylabel('aROHR [J/deg]');
+xlim([-15 40]); grid on
+
+figure(4); clf; hold on
+title('apparent Heat Release vs Crank Angle'); xlabel('CA [deg]'); ylabel('aHR [J]');
+xlim([-15 40]); grid on
+
+% CA colormap
+CA_colors = lines(50);  
+
 for k = 1:nFiles
     fdaq_file = fullfile(folder, files_fdaq(k).name);
     sdaq_file = fullfile(folder, files_sdaq(k).name);
 
-    %% Extract CA and Power info from filename for the titles of the plots
-    [~, fname, ~] = fileparts(fdaq_file); % fname = 'FuelName_CA50-30P_fdaq' or 'FuelName+Diesel_Blend_CA50-30P_fdaq'
-    
-    CA_pos = strfind(fname, 'CA'); 
-    if isempty(CA_pos)
-        title_str = fname; 
+    %% Extract CA and Power info from filename
+    [~, fname, ~] = fileparts(fdaq_file);
+
+    CA_pos = strfind(fname, 'CA');
+    fuel_name = fname(1:CA_pos-2);
+    CA_power_str = fname(CA_pos:end);
+
+    CA_num = str2double(extractBetween(CA_power_str, 'CA', '-'));
+    Power  = str2double(extractBetween(CA_power_str, '-', 'P'));
+
+    data = Data_Extraction(fdaq_file, sdaq_file);
+    [aROHR, aHR, CA10, CA50, CA90] = comb_cara(Cyl, iselect, fuel, data);
+
+    CAx = data.Ca(:,iselect);
+
+    % Power colors
+    if Power == 30
+        pcolor = [1 0 0];
+    elseif Power == 50
+        pcolor = [0 0 1];
+    elseif Power == 70
+        pcolor = [0 1 0];
     else
-        fuel_name = fname(1:CA_pos-2);
-        CA_power_str = fname(CA_pos:end); 
-        CA_num = extractBetween(CA_power_str, 'CA', '-'); 
-        Power = extractBetween(CA_power_str, '-', 'P');   
-        title_str = [fuel_name ' - CA' CA_num ' - ' Power '% power'];
+        pcolor = [0 0 0];
     end
 
-    data = Data_Extraction(fdaq_file, sdaq_file); % load data
+    figure(1); 
+    plot(CAx, aROHR, 'Color', pcolor, 'LineWidth', 1.5);
 
-    [aROHR, aHR, CA10, CA50, CA90] = comb_cara(Cyl, iselect, fuel, data); %function 
+    figure(2);
+    plot(CAx, aHR, 'Color', pcolor, 'LineWidth', 1.5);
 
-    %% Plots
-    %Plot aROHR
+    % Ca colors
+    CAcolor = CA_colors(mod(CA_num, size(CA_colors,1))+1, :);
+
+    figure(3);
+    plot(CAx, aROHR, 'Color', CAcolor, 'DisplayName', ['CA' num2str(CA_num)], 'LineWidth', 1.5);
+
+    figure(4);
+    plot(CAx, aHR, 'Color', CAcolor, 'DisplayName', ['CA' num2str(CA_num)], 'LineWidth', 1.5);
+
+end
+figure(1)
+hold on
+legend({'30% Power','50% Power','70% Power'}, 'Location', 'best');
+
+figure(2)
+hold on
+legend({'30% Power','50% Power','70% Power'}, 'Location', 'best');
+
+figure(3);
+legend show
+
+figure(4);
+legend show
+
+
+
+for k = 1:nFiles
+
+    fdaq_file = fullfile(folder, files_fdaq(k).name);
+    sdaq_file = fullfile(folder, files_sdaq(k).name);
+
+    fname = files_fdaq(k).name;
+    
+    CA_num = extractBetween(fname, "CA", "-");
+    Power  = extractBetween(fname, "-", "P");
+    fuel_name = erase(fname, extractAfter(fname, "_"));
+
+    title_str = sprintf('%s - CA%s - %s%% power', fuel_name, CA_num{1}, Power{1});
+
+    data = Data_Extraction(fdaq_file, sdaq_file);
+    [aROHR, aHR, CA10, CA50, CA90] = comb_cara(Cyl, iselect, fuel, data);
+
+    CAx = data.Ca(:,iselect);
+
+    %% aROHR figure
     figure('Name', ['aROHR - File ' num2str(k)]);
-    plot(data.Ca(:,iselect), aROHR, 'LineWidth', 1.5);
-    grid on;
-    xlim([-45 125])
-    xlabel('Crank Angle [deg]');
-    ylabel('Rate of Heat Release [J/deg]');
-    title(['aROHR vs Crank Angle: ' title_str]);
+    plot(CAx, aROHR, 'LineWidth', 1.5);
+    grid on; xlim([-45 125])
+    xlabel('Crank Angle [deg]'); ylabel('Rate of Heat Release [J/deg]');
+    title(['aROHR vs CA: ' title_str]);
 
-    % Plot aHR
+    %% aHR figure
     figure('Name', ['aHR - File ' num2str(k)]);
-    plot(data.Ca(:,iselect), aHR, 'LineWidth', 1.5)
+    plot(CAx, aHR, 'LineWidth', 1.5); hold on; grid on
     xlim([-45 125])
-    xlabel('CA [deg]'); 
-    ylabel('aHR [J]');
-    title(['Apparent Heat Release vs Crank Angle: ' title_str])
-    grid on
-    hold on
+    xlabel('CA [deg]'); ylabel('aHR [J]');
+    title(['Apparent Heat Release vs CA: ' title_str]);
 
-    % Plot CAx
-    aHR10 = interp1(data.Ca(:,iselect), aHR, CA10);
-    aHR50 = interp1(data.Ca(:,iselect), aHR, CA50);
-    aHR90 = interp1(data.Ca(:,iselect), aHR, CA90);
+    % Mark CA10, CA50, CA90
+    aHR10 = interp1(CAx, aHR, CA10);
+    aHR50 = interp1(CAx, aHR, CA50);
+    aHR90 = interp1(CAx, aHR, CA90);
 
     plot(CA10, aHR10, 'r.', 'MarkerSize', 20)
     plot(CA50, aHR50, 'g.', 'MarkerSize', 20)
     plot(CA90, aHR90, 'b.', 'MarkerSize', 20)
-    legend('aHR vs CA', 'CA10', 'CA50', 'CA90', 'Location', 'northwest')
+
+    legend('aHR', 'CA10', 'CA50', 'CA90', 'Location', 'northwest');
 end
+
 
 
 %% function for combustion characteristics

@@ -9,9 +9,20 @@ function [BSem] = KPICalculation(emissions,AFR_sto,FUEL_m_flow,Power,fuel)
 % - Output:
 %   - BSem: a struct with all the Brake Specific Emissions
 
-LHV_filename = 'Data/Q_LHV.xlsx';
-LHV_data = readtable(LHV_filename);
-Q_LHV = LHV_data.(fuel);
+
+% instead of the file Q_LHV
+if strcmp(fuel, 'Diesel')
+    Q_LHV = 44.6; 
+elseif strcmp(fuel, 'GTL')
+    Q_LHV = 44.06;
+elseif strcmp(fuel, 'GTL+Diesel_Blend')
+    Q_LHV = 44.33;
+elseif strcmp(fuel, 'HVO')
+    Q_LHV = 44;
+elseif strcmp(fuel, 'HVO+Diesel_Blend')
+    Q_LHV = 44.3;
+end
+
 
 
 % Molar Masses
@@ -42,5 +53,5 @@ BSem.BSCO2 = CO2_m_flow*gperJ_to_gperkWh/Power;
 BSem.BSHC  =  HC_m_flow*gperJ_to_gperkWh/Power;
 BSem.BSO2  =  O2_m_flow*gperJ_to_gperkWh/Power;
 BSem.BSNOx = NOx_m_flow*gperJ_to_gperkWh/Power;
-Bsem.eff= Power/(FUEL_m_flow*Q_LHV);
+BSem.eff= Power/(FUEL_m_flow*Q_LHV);
 end
