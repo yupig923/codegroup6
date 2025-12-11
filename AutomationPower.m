@@ -1,6 +1,6 @@
 clear all; clc;close all;
 %% Process all .txt files in Data/HVO
-fuel = 'HVO';
+fuel = 'GTL';
 folder = fullfile('Data',fuel);
 files = dir(fullfile(folder, '*fdaq.txt'));
 
@@ -136,7 +136,7 @@ end
 %% --- Plotting results ---
 
 uniqueP = unique(Results.Percentage); % all unique percentages
-figure('Color','black');
+figure('Color','white');
 
 % --- Plot Net Work ---
 subplot(2,2,1);
@@ -191,3 +191,25 @@ legend(arrayfun(@(x) sprintf('%d%%',x), uniqueP,'UniformOutput',false),'Location
 grid on; hold off;
 
 sgtitle(['Results for Fuel: ' fuel],'FontSize',14); % super-title for all 4 plots
+
+%% --- New separate figure: Power with Error Bars ---
+figure('Color','white');
+hold on;
+for i = 1:length(uniqueP)
+    idx = Results.Percentage == uniqueP(i);
+    
+    % Calculate error bars from std dev
+    % Power error = std_work * cycles_per_second
+    RPM = 1500;
+    cycles_per_second = RPM / (2 * 60);
+    powerError = Results.WnetStd(idx) * cycles_per_second;
+    
+    errorbar(Results.CrankAngle(idx), Results.PowerOut(idx), powerError, ...
+             '-o', 'LineWidth', 1.5, 'MarkerSize', 6, 'CapSize', 8);
+end
+xlabel('Crank Angle [°]');
+ylabel('Power [W]');
+title(['Power vs Crank Angle with Error Bars (±1 STD) - ' fuel]);
+legend(arrayfun(@(x) sprintf('%d%%',x), uniqueP,'UniformOutput',false),'Location','best');
+grid on;
+hold off;

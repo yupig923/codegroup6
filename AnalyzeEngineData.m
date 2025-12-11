@@ -36,8 +36,8 @@ CaEVC = -344;
 CaSOI = -3.2;
 
 %% Load data using Data_Extraction_pf
-Filename_fdaq = fullfile("Data","Example","20251120_0000001_example_fdaq.txt");
-Filename_sdaq = fullfile("Data","Example","20251120_0000001_example_sdaq.txt");
+Filename_fdaq = fullfile("Data","Diesel","100diesel_CA14-30P_fdaq.txt");
+Filename_sdaq = fullfile("Data","Diesel","100diesel_CA14-30P_sdaq.txt");
 
 data = Data_Extraction(Filename_fdaq, Filename_sdaq);
 
