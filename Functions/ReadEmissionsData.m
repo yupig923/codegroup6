@@ -7,7 +7,7 @@ ppm     = 1e-6;
 folder = fullfile('Data', fuel);
 filename = fullfile(folder,'emissions.txt');
 
-delimiter = '，'; % The non-standard delimiter (full-width comma) used in the file
+delimiter = ','; % Used normal comma
 sort_columns = {'CA_exp', 'Load'}; 
 
 fprintf('Attempting to read data from: %s\n', filename);
