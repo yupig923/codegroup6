@@ -165,6 +165,25 @@ for k = 1:nFiles
     plot(CA90, aHR90, 'b.', 'MarkerSize', 20)
 
     legend('aHR', 'CA10', 'CA50', 'CA90', 'Location', 'northwest');
+
+
+
+
+    % Smooth the aHR curve using Savitzky–Golay filter
+    frame  = 21;      % must be odd; increase for stronger smoothing
+    order  = 3;       % polynomial order
+    aHR_sm = sgolayfilt(aHR, order, frame);
+
+    figure; hold on;
+    plot(CA, aHR_sm, 'LineWidth', 1.8)
+    scatter(CA10, aHR(CA10_index), 60, 'r', 'filled')
+    scatter(CA50, aHR(CA50_index), 60, 'g', 'filled')
+    scatter(CA90, aHR(CA90_index), 60, 'b', 'filled')
+    legend('aHR', 'CA10', 'CA50', 'CA90', 'Location', 'northwest');
+    title('Apparent Heat Release vs CA (Smoothed)')
+    xlabel('CA [deg]')
+    ylabel('aHR [J]')
+    grid on
 end
 
 
