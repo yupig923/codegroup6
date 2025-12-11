@@ -175,10 +175,13 @@ for k = 1:nFiles
     aHR_sm = sgolayfilt(aHR, order, frame);
 
     figure; hold on;
-    plot(CA, aHR_sm, 'LineWidth', 1.8)
-    scatter(CA10, aHR(CA10_index), 60, 'r', 'filled')
-    scatter(CA50, aHR(CA50_index), 60, 'g', 'filled')
-    scatter(CA90, aHR(CA90_index), 60, 'b', 'filled')
+    plot(CAx, aHR_sm, 'LineWidth', 1.8)
+    aHR10 = interp1(CAx, aHR_sm, CA10);
+    aHR50 = interp1(CAx, aHR_sm, CA50);
+    aHR90 = interp1(CAx, aHR_sm, CA90);
+    plot(CA10, aHR10, 'r.', 'MarkerSize', 20)
+    plot(CA50, aHR50, 'g.', 'MarkerSize', 20)
+    plot(CA90, aHR90, 'b.', 'MarkerSize', 20)
     legend('aHR', 'CA10', 'CA50', 'CA90', 'Location', 'northwest');
     title('Apparent Heat Release vs CA (Smoothed)')
     xlabel('CA [deg]')
