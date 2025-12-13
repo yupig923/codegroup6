@@ -144,14 +144,15 @@ for k = 1:nFiles
     %% aROHR figure
     figure('Name', ['aROHR - File ' num2str(k)]);
     plot(CAx, aROHR, 'LineWidth', 1.5);
-    grid on; xlim([-45 125])
+    grid on; 
+    xlim([-15 40])
     xlabel('Crank Angle [deg]'); ylabel('Rate of Heat Release [J/deg]');
     title(['aROHR vs CA: ' title_str]);
 
     %% aHR figure
     figure('Name', ['aHR - File ' num2str(k)]);
     plot(CAx, aHR, 'LineWidth', 1.5); hold on; grid on
-    xlim([-45 125])
+    xlim([-15 40])
     xlabel('CA [deg]'); ylabel('aHR [J]');
     title(['Apparent Heat Release vs CA: ' title_str]);
 
@@ -165,28 +166,6 @@ for k = 1:nFiles
     plot(CA90, aHR90, 'b.', 'MarkerSize', 20)
 
     legend('aHR', 'CA10', 'CA50', 'CA90', 'Location', 'northwest');
-
-
-
-
-    % Smooth the aHR curve using Savitzky–Golay filter
-    frame  = 21;      % must be odd; increase for stronger smoothing
-    order  = 3;       % polynomial order
-    aHR_sm = sgolayfilt(aHR, order, frame);
-
-    figure; hold on;
-    plot(CAx, aHR_sm, 'LineWidth', 1.8)
-    aHR10 = interp1(CAx, aHR_sm, CA10);
-    aHR50 = interp1(CAx, aHR_sm, CA50);
-    aHR90 = interp1(CAx, aHR_sm, CA90);
-    plot(CA10, aHR10, 'r.', 'MarkerSize', 20)
-    plot(CA50, aHR50, 'g.', 'MarkerSize', 20)
-    plot(CA90, aHR90, 'b.', 'MarkerSize', 20)
-    legend('aHR', 'CA10', 'CA50', 'CA90', 'Location', 'northwest');
-    title('Apparent Heat Release vs CA (Smoothed)')
-    xlabel('CA [deg]')
-    ylabel('aHR [J]')
-    grid on
 end
 
 

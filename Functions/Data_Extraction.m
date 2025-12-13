@@ -77,7 +77,7 @@ p_avg = data.p_avg;
 
 % Savitzky-Golay filter - mentioned in the handbook
 try
-    p_filt = sgolayfilt(p_avg, 3, 21);
+    p_filt = sgolayfilt(p_avg, 3, 55);
 catch
     %fallback
     w = ones(21,1) / 21;
