@@ -21,6 +21,8 @@ elseif strcmp(fuel, 'HVO')
     Q_LHV = 44*10^6;
 elseif strcmp(fuel, 'HVO+Diesel_Blend')
     Q_LHV = 44.3*10^6;
+elseif strcmp(fuel, 'Dieselgroup16')
+    Q_LHV = 44.6*10^6; 
 end
 
 FUEL_m_flow = FUEL_m_flow/10^3; % convert to kg/s
