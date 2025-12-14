@@ -1,8 +1,8 @@
 clc; clear all; close all;
 % Plotting gamma and show how to work with i
 
-Fuel = 'HVO';
-emissions = ReadEmissionsData(Fuel);
+fuel = 'HVO';
+emissions = ReadEmissionsData(fuel);
 
 %Nasa Poly
 global Runiv
@@ -20,58 +20,56 @@ CaIVC = -135;
 CaEVO = 149;
 CaEVC = -344;
 CaSOI = -3.2;
-filename = AutoReadFilesFromFuels(Fuel);
+filename = AutoReadFilesFromFuels(fuel);
 
-index = 10; %choose to only look at this cycle
-
-
-gammalist = [];
-for i = 1:length(emissions)
-    data = Data_Extraction(filename.fastfiles(i).relpath,filename.slowfiles(i).relpath);
-    volumefrac_N2 = 1-(emissions(i).CO+emissions(i).CO2+emissions(i).HC+emissions(i).O2+emissions(i).NOx);
-   
-    Xair = [emissions(i).CO,emissions(i).CO2,emissions(i).HC,emissions(i).O2,0.85*emissions(i).NOx,0.15*emissions(i).NOx,volumefrac_N2];
-    Yair = Xair .* Mi;
-    Yair = Yair/sum(Yair);
-    
-    Volume = CylinderVolume(data.Ca(:,index),Cyl);
-    
-    AFR_sto = 14.5;
-    Actual_AFR = emissions(i).lambda*AFR_sto;
-    Exhaust_mass_flow = (Actual_AFR+1)*data.AVG_fuel_m_flow/1000; %in kg/s
-    Exhaust_mass_per_cycle = Exhaust_mass_flow/(1500/(60*2));
-
-    Temperature = (data.p(:,index) .* Volume*(Xair*Mi'))/(Runiv * Exhaust_mass_per_cycle);
-
-
-    for t = 1:length(Temperature)
-        [Cp,Cv,~,~] = ThermoMix(Yair,Temperature(t),SpS);
-
-        gammalist(t,i) = Cp/Cv;
-    end
-
+if strcmp(fuel, 'Diesel')
+    fuel_specfic_AFR_sto = 14.5; 
+elseif strcmp(fuel, 'GTL')
+    fuel_specfic_AFR_sto = 14.7;
+elseif strcmp(fuel, 'GTL+Diesel_Blend')
+    fuel_specfic_AFR_sto = 14.6;
+elseif strcmp(fuel, 'HVO')
+    fuel_specfic_AFR_sto = 14.55;
+elseif strcmp(fuel, 'HVO+Diesel_Blend')
+    fuel_specfic_AFR_sto = 14.525;
 end
+
+data = Data_Extraction(filename.fastfiles(1).relpath,filename.slowfiles(1).relpath);
+tic
+[Temperature,gammalist] = gammafunc(emissions(1),fuel_specfic_AFR_sto,data.AVG_fuel_m_flow,data.p_filt,data.Ca);
+toc
+
 figure
 plot(data.Ca,Temperature)
 xlabel('Crank angle [deg]')
 ylabel('Temperature')
+xlim([-90,180])
+title("Temperature over the Crank Angle")
 grid on
 figure
-plot(data.Ca,data.p(:,index))
+hold on
+plot(data.Ca,data.p,Color="r")
+plot(data.Ca,data.p_filt,Color="g")
+hold off
 xlabel('Crank angle [deg]')
 ylabel('Pressure')
 grid on
 figure
-plot(data.Ca,Volume)
+%plot(data.Ca,Volume)
 xlabel('Crank angle [deg]')
 ylabel('Volume of the cylinder')
 grid on
 figure;
 hold on
-for y = 1:15
-    plot(data.Ca(:,index),gammalist(:,y))
+for y = 1:1
+    plot(data.Ca,gammalist)
 end
 hold off
 xlabel('Crank angle [deg]')
 ylabel('Gamma [\gamma]')
+xlim([-90,180])
 grid on
+title("Gamma over the Crank Angle")
+
+figure
+scatter(Temperature,gammalist)
