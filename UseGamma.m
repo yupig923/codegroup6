@@ -32,15 +32,17 @@ elseif strcmp(fuel, 'HVO')
     fuel_specfic_AFR_sto = 14.55;
 elseif strcmp(fuel, 'HVO+Diesel_Blend')
     fuel_specfic_AFR_sto = 14.525;
+elseif strcmp(fuel, 'Dieselgroup16')
+    fuel_specfic_AFR_sto = 14.5; 
 end
 
 data = Data_Extraction(filename.fastfiles(1).relpath,filename.slowfiles(1).relpath);
 tic
-[Temperature,gammalist] = gammafunc(emissions(1),fuel_specfic_AFR_sto,data.AVG_fuel_m_flow,data.p_filt,data.Ca);
+gammalist = gammafunc(emissions(1),fuel_specfic_AFR_sto,data.AVG_fuel_m_flow,data.p_filt,data.Ca);
 toc
 
 figure
-plot(data.Ca,Temperature)
+%plot(data.Ca,Temperature)
 xlabel('Crank angle [deg]')
 ylabel('Temperature')
 xlim([-90,180])
@@ -72,4 +74,4 @@ grid on
 title("Gamma over the Crank Angle")
 
 figure
-scatter(Temperature,gammalist)
+%scatter(Temperature,gammalist)

@@ -1,4 +1,4 @@
-function [Temperature,gammalist] = gammafunc(emissions,AFR_sto,fuel_m_flow,pressure,Ca)
+function gammalist = gammafunc(emissions,AFR_sto,fuel_m_flow,pressure,Ca)
 % This function calculated the gamma for the pressure and Ca you give it.
 % It can only do one data file at the time, so only one measurement with
 % 200 cycles.
