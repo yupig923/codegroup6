@@ -12,17 +12,18 @@ function [BSem] = KPICalculation(emissions,AFR_sto,FUEL_m_flow,Power,fuel)
 
 % instead of the file Q_LHV
 if strcmp(fuel, 'Diesel')
-    Q_LHV = 44.6; 
+    Q_LHV = 44.6*10^6; 
 elseif strcmp(fuel, 'GTL')
-    Q_LHV = 44.06;
+    Q_LHV = 44.06*10^6;
 elseif strcmp(fuel, 'GTL+Diesel_Blend')
-    Q_LHV = 44.33;
+    Q_LHV = 44.33*10^6;
 elseif strcmp(fuel, 'HVO')
-    Q_LHV = 44;
+    Q_LHV = 44*10^6;
 elseif strcmp(fuel, 'HVO+Diesel_Blend')
-    Q_LHV = 44.3;
+    Q_LHV = 44.3*10^6;
 end
 
+FUEL_m_flow = FUEL_m_flow/10^3; % convert to kg/s
 
 
 % Molar Masses
@@ -33,7 +34,7 @@ O2_molarmass = 32;
 NOx_molarmass = 46; % this is an approximation
 AIR_molarmass = 29; % this is an approximation
 
-gperJ_to_gperkWh = 3600*1000;
+kgperJ_to_gperkWh = 3600*1000*1000;
 
 % Find the Volume 
 Actual_AFR = emissions.lambda*AFR_sto;
@@ -47,11 +48,11 @@ CO2_m_flow = (CO2_molarmass * emissions.CO2 * Exhaust_mass_flow)/AIR_molarmass;
 NOx_m_flow = (NOx_molarmass * emissions.NOx * Exhaust_mass_flow)/AIR_molarmass;
 
 BSem = struct();
-BSem.BSFC  =FUEL_m_flow*gperJ_to_gperkWh/Power;
-BSem.BSCO  =  CO_m_flow*gperJ_to_gperkWh/Power;
-BSem.BSCO2 = CO2_m_flow*gperJ_to_gperkWh/Power;
-BSem.BSHC  =  HC_m_flow*gperJ_to_gperkWh/Power;
-BSem.BSO2  =  O2_m_flow*gperJ_to_gperkWh/Power;
-BSem.BSNOx = NOx_m_flow*gperJ_to_gperkWh/Power;
-BSem.eff= Power/(FUEL_m_flow*Q_LHV);
+BSem.BSFC  =FUEL_m_flow*kgperJ_to_gperkWh/Power;
+BSem.BSCO  =  CO_m_flow*kgperJ_to_gperkWh/Power;
+BSem.BSCO2 = CO2_m_flow*kgperJ_to_gperkWh/Power;
+BSem.BSHC  =  HC_m_flow*kgperJ_to_gperkWh/Power;
+BSem.BSO2  =  O2_m_flow*kgperJ_to_gperkWh/Power;
+BSem.BSNOx = NOx_m_flow*kgperJ_to_gperkWh/Power;
+BSem.eff = Power/(FUEL_m_flow*Q_LHV);
 end
