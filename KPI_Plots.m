@@ -31,7 +31,7 @@ emissions_fuel=ReadEmissionsData(fuel);
 
 % Instead of the file AF_sto
 if strcmp(fuel, 'Diesel')
-    fuel_specfic_AFR_sto = 14.5; 
+    fuel_specfic_AFR_sto = 14.5;
 elseif strcmp(fuel, 'GTL')
     fuel_specfic_AFR_sto = 14.7;
 elseif strcmp(fuel, 'GTL+Diesel_Blend')
@@ -40,6 +40,8 @@ elseif strcmp(fuel, 'HVO')
     fuel_specfic_AFR_sto = 14.55;
 elseif strcmp(fuel, 'HVO+Diesel_Blend')
     fuel_specfic_AFR_sto = 14.525;
+elseif strcmp(fuel, 'Dieselgroup16')
+    fuel_specfic_AFR_sto = 14.5;
 end
  
 
@@ -69,7 +71,6 @@ colors = lines(length(targetLoads));
 
 %% Plot BSNOx
 figure;
-title('brake specific emissions')
 tiledlayout(3,1,'TileSpacing','compact','Padding','compact');
 
 nexttile; hold on;
@@ -92,6 +93,7 @@ ylabel("BSNOx [g/kWh]");
 title("Brake Specific NOx vs CA");
 grid on;
 legend("Location","best");
+xlim([3 19])
 
 
 %% Plot BSCO2
@@ -115,6 +117,7 @@ ylabel("BSCO2 [g/kWh]");
 title("Brake Specific CO2 vs CA");
 grid on;
 legend("Location","best");
+xlim([3 19])
 %% Plot BSCO
 
 nexttile; hold on;
@@ -137,10 +140,12 @@ ylabel("BSCO [g/kWh]");
 title("Brake Specific CO vs CA");
 grid on;
 legend("Location","best");
-
+xlim([3 19])
 
 %% Plot BSFC
-figure; hold on;
+figure;
+tiledlayout(2,1,'TileSpacing','compact','Padding','compact');
+nexttile; hold on;
 for l = 1:length(targetLoads)
     loadVal = targetLoads(l);
 
@@ -160,12 +165,12 @@ ylabel("BSFC [g/kWh]");
 title("Brake Specific Fuel Consumption vs CA");
 grid on;
 legend("Location","best");
-
+xlim([3 19])
 
 
 %% Plot BSeff
 
-figure; hold on;
+nexttile; hold on;
 for l = 1:length(targetLoads)
     loadVal = targetLoads(l);
 
@@ -185,7 +190,7 @@ ylabel("efficiency [-]");
 title("Efficiency vs CA");
 grid on;
 legend("Location","best");
-
+xlim([3 19])
 
 
 
