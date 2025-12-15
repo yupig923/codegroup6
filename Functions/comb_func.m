@@ -43,7 +43,7 @@ aHR90 = 0.9 * max_aHR;
 %find the value of the crank angle by looking into the crank angles between
 %0 and 150 degrees
 
-idx_min = find(aHR >= 0, 1, 'first');
+idx_min = find(Ca >= 0, 1, 'first');
 
 idx = idx_min:idx_max;
 CA10 = interp1(aHR(idx), Ca(idx), aHR10);

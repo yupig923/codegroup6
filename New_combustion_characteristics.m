@@ -55,13 +55,31 @@ xlim([-15 40]); grid on
 % CA colormap
 CA_colors = lines(50);
 
+
+comb_data = struct;
+comb_data.aROHR= [];
+comb_data.aHR  = [];
+comb_data.CA10 = [];
+comb_data.CA50 = [];
+comb_data.CA90 = [];
+comb_data.Delay= [];
+
+
 for k = 1:nFiles
 
     data = Data_Extraction(filename.fastfiles(k).relpath,filename.slowfiles(k).relpath);
     [aROHR, aHR, CA10, CA50, CA90] = comb_func(data,emissions(k),fuel_specfic_AFR_sto);
 
+    comb_data.aROHR(:,k) = aROHR;
+    comb_data.aHR(:,k) = aHR;
+    comb_data.CA10(k) =CA10;
+    comb_data.CA50(k) =CA50;
+    comb_data.CA90(k) =CA90;
+
     CA_num = filename.CA_vals(k);
     Power  = filename.P_vals(k);
+
+    %comb_data.Delay(:,k) = SOI - Power; SOI still has to be found
 
         % Power colors
     if Power == 30
@@ -135,3 +153,15 @@ legend show
 
 figure(4);
 legend show
+
+%% Print Results
+
+% Create final table
+Results = table(-round(filename.CA_vals,1),round(filename.P_vals,1), round(comb_data.CA10',1), round(comb_data.CA50',1), round(comb_data.CA90',1));
+Results.Properties.VariableNames = {'CrankAngle','Percentage','CA10','CA50','CA90'};
+
+% Display
+disp(' ');
+disp(['====================== FINAL RESULTS TABLE (' fuel ') ======================']);
+disp( '====================== All the angles are in ATDC ========================' );
+disp(Results);
