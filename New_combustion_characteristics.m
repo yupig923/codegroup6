@@ -25,13 +25,13 @@ elseif strcmp(fuel, 'HVO+Diesel_Blend')
     fuel_specfic_AFR_sto = 14.525;
 end
 
-% Extract emission data
-emissions = ReadEmissionsData(fuel);
-
 % Add paths
 addpath('Nasa\')
 addpath('Data\')
 addpath('Functions\')
+
+% Extract emission data
+emissions = ReadEmissionsData(fuel);
 
 filename = AutoReadFilesFromFuels(fuel);
 nFiles = length(filename.fastfiles);
@@ -109,7 +109,11 @@ for k = 1:nFiles
     figure(4);
     plot(CAx, aHR, 'Color', CAcolor, 'DisplayName', ['CA' num2str(CA_num)], 'LineWidth', 1.5);
 
-    title_str = sprintf('%s - CA%s - %s%% power', fuel, CA_num, Power);
+    title_str = sprintf('%s - CA%s - %s%% power', fuel, num2str(CA_num), num2str(Power));
+
+
+
+
 
     %% aROHR figure
     figure('Name', ['aROHR - File ' num2str(k)]);
