@@ -165,3 +165,86 @@ disp(' ');
 disp(['====================== FINAL RESULTS TABLE (' fuel ') ======================']);
 disp( '====================== All the angles are in ATDC ========================' );
 disp(Results);
+
+% Extract data from Results table
+InjectionTiming = Results.CrankAngle;
+Load = Results.Percentage;
+CA50_vals = Results.CA50;
+
+% Get unique loads for colors
+loads = unique(Load);
+colors = lines(length(loads));
+
+%% 3D Plot - CA50 vs Injection Timing vs Load
+figure;
+hold on;
+
+% Plot each load as a separate line in 3D space
+for i = 1:length(loads)
+    idx = (Load == loads(i));
+    plot3(InjectionTiming(idx), Load(idx), CA50_vals(idx), '-o', ...
+        'LineWidth', 3, ...
+        'MarkerSize', 10, ...
+        'MarkerFaceColor', colors(i,:), ...
+        'Color', colors(i,:), ...
+        'DisplayName', sprintf('%d%% Load', loads(i)));
+end
+
+grid on;
+xlabel('Injection Timing [°ATDC]', 'FontSize', 12, 'FontWeight', 'bold');
+ylabel('Load [%]', 'FontSize', 12, 'FontWeight', 'bold');
+zlabel('CA50 [°ATDC]', 'FontSize', 12, 'FontWeight', 'bold');
+title('CA50 Response to Injection Timing and Load', 'FontSize', 14);
+legend('Location', 'best');
+set(gca, 'FontSize', 11);
+view(45, 20);
+box on;
+
+% Get unique values
+loads = unique(Load);
+InjTimings = unique(InjectionTiming);
+
+%% Heatmap
+figure;
+% Create matrix for heatmap
+CA50_matrix = zeros(length(loads), length(InjTimings));
+for i = 1:length(loads)
+    for j = 1:length(InjTimings)
+        idx = (Load == loads(i)) & (InjectionTiming == InjTimings(j));
+        CA50_matrix(i,j) = CA50_vals(idx);
+    end
+end
+
+h = heatmap(InjTimings, loads, CA50_matrix);
+h.Title = 'CA50 Heatmap';
+h.XLabel = 'Injection Timing [°ATDC]';
+h.YLabel = 'Load [%]';
+h.Colormap = hot;
+h.ColorbarVisible = 'on';
+h.FontSize = 11;
+
+%% Surface Plot
+figure;
+% Create a finer grid for smooth surface
+[IT_grid, Load_grid] = meshgrid(linspace(min(InjectionTiming), max(InjectionTiming), 50), ...
+                                 linspace(min(Load), max(Load), 50));
+CA50_grid = griddata(InjectionTiming, Load, CA50_vals, IT_grid, Load_grid, 'cubic');
+
+% Plot surface
+surf(IT_grid, Load_grid, CA50_grid, 'EdgeAlpha', 0.3, 'FaceAlpha', 0.8);
+hold on;
+
+% Overlay actual data points
+scatter3(InjectionTiming, Load, CA50_vals, 100, 'r', 'filled', ...
+    'MarkerEdgeColor', 'k', 'LineWidth', 1.5);
+
+xlabel('Injection Timing [°ATDC]', 'FontSize', 12, 'FontWeight', 'bold');
+ylabel('Load [%]', 'FontSize', 12, 'FontWeight', 'bold');
+zlabel('CA50 [°ATDC]', 'FontSize', 12, 'FontWeight', 'bold');
+title('CA50 Response Surface', 'FontSize', 14);
+colorbar;
+colormap('jet');
+view(45, 20);
+grid on;
+box on;
+set(gca, 'FontSize', 11);
