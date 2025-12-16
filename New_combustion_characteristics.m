@@ -10,7 +10,7 @@ Cyl.TDCangle         = 180;
 global Runiv
 Runiv = 8.314;
 
-fuel = 'HVO'; % Select the fuel you want to analyse
+fuel = 'Dieselgroup22'; % Select the fuel you want to analyse
 
 % Find the AFR_sto of the fuel
 if strcmp(fuel, 'Diesel')
@@ -23,6 +23,8 @@ elseif strcmp(fuel, 'HVO')
     fuel_specfic_AFR_sto = 14.55;
 elseif strcmp(fuel, 'HVO+Diesel_Blend')
     fuel_specfic_AFR_sto = 14.525;
+elseif strcmp(fuel, 'Dieselgroup22')
+    fuel_specfic_AFR_sto = 14.5; 
 end
 
 % Add paths
