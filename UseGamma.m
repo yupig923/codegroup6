@@ -1,7 +1,7 @@
 clc; clear all; close all;
 % Plotting gamma and show how to work with i
 
-fuel = 'HVO';
+fuel = 'Dieselgroup16';
 emissions = ReadEmissionsData(fuel);
 
 %Nasa Poly
