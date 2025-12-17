@@ -65,6 +65,7 @@ comb_data.CA10 = [];
 comb_data.CA50 = [];
 comb_data.CA90 = [];
 comb_data.Delay= [];
+comb_data.SOI=[];
 
 
 for k = 1:nFiles
@@ -77,7 +78,7 @@ for k = 1:nFiles
     comb_data.CA10(k) =CA10;
     comb_data.CA50(k) =CA50;
     comb_data.CA90(k) =CA90;
-
+    %comb_data.SOI(k)=SOI;
     CA_num = filename.CA_vals(k);
     Power  = filename.P_vals(k);
 
@@ -96,6 +97,28 @@ for k = 1:nFiles
     
     CAx = data.Ca_avg;
 
+    %Find SOI
+SOI_window = (CAx > -30) & (CAx < CA10);   % deg ATDC
+
+aROHR_window = aROHR(SOI_window);
+CA_window    = CAx(SOI_window);
+
+% Noise threshold (adaptive)
+noise_level = std(aROHR_window(CA_window < -10));
+SOI_thresh  = 5 * noise_level;   
+
+% Find first sustained rise
+idx = find(aROHR_window > SOI_thresh, 1, 'first');
+
+if isempty(idx)
+    comb_data.SOI(k)  = NaN;   % fallback if detection fails
+else
+    comb_data.SOI(k) = CA_window(idx);
+end
+
+    comb_data.Delay(k)=comb_data.CA10(k)-comb_data.SOI(k);
+
+    
     figure(1); 
     plot(CAx, aROHR, 'Color', pcolor, 'LineWidth', 1.5);
 
