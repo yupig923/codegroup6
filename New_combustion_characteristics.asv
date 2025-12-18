@@ -82,7 +82,7 @@ for k = 1:nFiles
     %comb_data.SOI(k)=SOI;
     CA_num = filename.CA_vals(k);
     Power  = filename.P_vals(k);
-    comb_data.CA_num(k)=CA_num;
+    comb_data.CA_num=CA_num;
 
     %comb_data.Delay(:,k) = SOI - Power; SOI still has to be found
 
@@ -107,7 +107,7 @@ CA_window    = CAx(SOI_window);
 
 % Noise threshold (adaptive)
 noise_level = std(aROHR_window(CA_window < -10));
-SOI_thresh  = 7 * noise_level;   
+SOI_thresh  = 5 * noise_level;   
 
 % Find first sustained rise
 idx = find(aROHR_window > SOI_thresh, 1, 'first');
@@ -118,7 +118,7 @@ else
     comb_data.SOI(k) = CA_window(idx);
 end
 
-    comb_data.Delay(k)=comb_data.SOI(k)+comb_data.CA_num(k);
+    comb_data.Delay(k)=comb_data.SOI(k)+comb_data.;
 
     
     figure(1); 
