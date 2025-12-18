@@ -279,3 +279,29 @@ view(45, 20);
 grid on;
 box on;
 set(gca, 'FontSize', 11);
+
+%Delay Surface Plot
+figure;
+% Create a finer grid for smooth surface
+[IT_grid, Load_grid] = meshgrid(linspace(min(InjectionTiming), max(InjectionTiming), 50), ...
+                                 linspace(min(Load), max(Load), 50));
+Delay_grid = griddata(InjectionTiming, Load, comb_data.Delay, IT_grid, Load_grid, 'cubic');
+
+% Plot surface
+surf(IT_grid, Load_grid, Delay_grid, 'EdgeAlpha', 0.3, 'FaceAlpha', 0.8);
+hold on;
+
+% Overlay actual data points
+scatter3(InjectionTiming, Load, comb_data.Delay, 100, 'r', 'filled', ...
+    'MarkerEdgeColor', 'k', 'LineWidth', 1.5);
+
+xlabel('Injection Timing [°ATDC]', 'FontSize', 12, 'FontWeight', 'bold');
+ylabel('Load [%]', 'FontSize', 12, 'FontWeight', 'bold');
+zlabel('Delay [°ATDC]', 'FontSize', 12, 'FontWeight', 'bold');
+title('Injection Delay Surface', 'FontSize', 14);
+colorbar;
+colormap('jet');
+view(45, 20);
+grid on;
+box on;
+set(gca, 'FontSize', 11);
