@@ -65,26 +65,25 @@ comb_data.CA10 = [];
 comb_data.CA50 = [];
 comb_data.CA90 = [];
 comb_data.Delay= [];
-comb_data.SOI=[];
+comb_data.SOIgnition=[];
 comb_data.CA_num=[];
 
 
 for k = 1:nFiles
 
     data = Data_Extraction(filename.fastfiles(k).relpath,filename.slowfiles(k).relpath);
-    [aROHR, aHR, CA10, CA50, CA90] = comb_func(data,emissions(k),fuel_specfic_AFR_sto);
+    [aROHR, aHR, CA10, CA50, CA90, SOIgnition] = comb_func(data,emissions(k),fuel_specfic_AFR_sto);
 
     comb_data.aROHR(:,k) = aROHR;
     comb_data.aHR(:,k) = aHR;
     comb_data.CA10(k) =CA10;
     comb_data.CA50(k) =CA50;
     comb_data.CA90(k) =CA90;
-    %comb_data.SOI(k)=SOI;
+    comb_data.SOIgnition(k)=SOIgnition;
     CA_num = filename.CA_vals(k);
     Power  = filename.P_vals(k);
     comb_data.CA_num(k)=CA_num;
-
-    %comb_data.Delay(:,k) = SOI - Power; SOI still has to be found
+    comb_data.Delay(:,k) = SOIgnition + CA_num;
 
         % Power colors
     if Power == 30
@@ -98,28 +97,6 @@ for k = 1:nFiles
     end
     
     CAx = data.Ca_avg;
-
-    %Find SOI start of ignition
-SOI_window = (CAx > -30) & (CAx < CA10);   % deg ATDC
-
-aROHR_window = aROHR(SOI_window);
-CA_window    = CAx(SOI_window);
-
-% Noise threshold (adaptive)
-noise_level = std(aROHR_window(CA_window < -10));
-SOI_thresh  = 7 * noise_level;   
-
-% Find first sustained rise
-idx = find(aROHR_window > SOI_thresh, 1, 'first');
-
-if isempty(idx)
-    comb_data.SOI(k)  = NaN;   % fallback if detection fails
-else
-    comb_data.SOI(k) = CA_window(idx);
-end
-
-    comb_data.Delay(k)=comb_data.SOI(k)+comb_data.CA_num(k);
-
     
     figure(1); 
     plot(CAx, aROHR, 'Color', pcolor, 'LineWidth', 1.5);
@@ -173,7 +150,7 @@ end
 
 figure(1)
 hold on
-legend({'30% Power','50% Power','70% Power'}, 'Location', 'best');
+legend({'30% Power','50% Power','70% Power'}, 'Location', 'northwest');
 
 figure(2)
 hold on
@@ -188,8 +165,8 @@ legend show
 %% Print Results
 
 % Create final table
-Results = table(-round(filename.CA_vals,1),round(filename.P_vals,1), round(comb_data.CA10',1), round(comb_data.CA50',1), round(comb_data.CA90',1));
-Results.Properties.VariableNames = {'CrankAngle','Percentage','CA10','CA50','CA90'};
+Results = table(round(filename.P_vals,1),-round(filename.CA_vals,1), round(comb_data.CA10',1), round(comb_data.CA50',1), round(comb_data.CA90',1),round(comb_data.SOIgnition',1),round(comb_data.Delay',1));
+Results.Properties.VariableNames = {'Percentage','Injection','CA10','CA50','CA90','Ignition','Delay'};
 
 % Display
 disp(' ');
@@ -198,7 +175,7 @@ disp( '====================== All the angles are in ATDC =======================
 disp(Results);
 
 % Extract data from Results table
-InjectionTiming = Results.CrankAngle;
+InjectionTiming = Results.Injection;
 Load = Results.Percentage;
 CA50_vals = Results.CA50;
 
