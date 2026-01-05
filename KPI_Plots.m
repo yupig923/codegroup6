@@ -19,7 +19,7 @@ addpath('Data\')
 addpath('Functions\')
 %% Actual Code
 % Defining which Fuel to use
-fuel="HVO";
+fuel="HVO+Diesel_Blend";
 Readfile_results=AutoReadFilesFromFuels(fuel);
 Load=Readfile_results.P_vals;
 Ca_exp=Readfile_results.CA_vals;
@@ -356,10 +356,39 @@ xlim([3 19])
 
 
 
+if fuel == "Diesel"
+    WtT = 3.70e-4;      
+elseif fuel == "HVO+Diesel_Blend"
+    WtT = 1.09315e-4;
+elseif fuel == "GTL+Diesel_Blend"
+    WtT = -1.12e-3;
+elseif fuel == "HVO"
+    WtT = -5.8863e-4;
+elseif fuel == "GTL"
+    WtT = -2.6e-3;
+elseif fuel == "Dieselgroup16"
+    WtT = 3.70e-4;
+end
 
+BSem.eff
 
+WtT_g_kWh = WtT * 1e6 * 3.6 ./ [BSem.eff]
 
+CA_vals   = Ca_exp(:);
+Load_vals = Load(:);
 
+% WTW values
+WTW_CO2_vals = WtT_g_kWh(:) + [BSem.BSCO2]';
+WTW_NOx_vals = [BSem.BSNOx]';
+WTW_CO_vals  = [BSem.BSCO]';
+
+% Create table
+WTW_table = table(Load_vals, CA_vals, WTW_CO2_vals, WTW_NOx_vals, WTW_CO_vals);
+WTW_table.Properties.VariableNames = {'Load', 'CA', 'WTW_CO2', 'WTW_NOx', 'WTW_CO'};
+
+WTW_table_sorted = sortrows(WTW_table, {'Load', 'CA'});
+
+disp(WTW_table_sorted);
 
 
 % figure;
