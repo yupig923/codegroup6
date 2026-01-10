@@ -1,6 +1,6 @@
 clear all; clc;close all;
 %% Process all .txt files in Data/HVO
-fuel = 'HVO';
+fuel = 'Dieselgroup22';
 folder = fullfile('Data',fuel);
 files = dir(fullfile(folder, '*fdaq.txt'));
 
