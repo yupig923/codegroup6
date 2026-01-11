@@ -1,75 +1,179 @@
 clear all; clc;close all;
+
 %% Process all .txt files in Data/HVO
 fuel = 'HVO+Diesel_Blend';
 folder = fullfile('Data',fuel);
 files = dir(fullfile(folder, '*fdaq.txt'));
 
-% Initialize result arrays
-numFiles = length(files);
-WnetAvg   = zeros(numFiles,1);
-WnetStd   = zeros(numFiles,1);
-WnetCov   = zeros(numFiles,1);
-TminWork  = zeros(numFiles,1);
-TmaxWork  = zeros(numFiles,1);
-PowerOut  = zeros(numFiles,1);
-CA_vals   = zeros(numFiles,1);
-P_vals    = zeros(numFiles,1);
 
-for k = 1:numFiles
-    FullName = fullfile(files(k).folder, files(k).name);
+%% Define all fuels to process
+fuels = {'Dieselgroup22', 'HVO', 'HVO+Diesel_Blend', 'GTL'};
 
-    fprintf('\n======================================================\n');
-    fprintf('Processing file: %s\n', files(k).name);
-    fprintf('======================================================\n');
+% Store all results in a cell array
+AllResults = cell(length(fuels), 1);
 
-    % Run the work & power calculation on this file
-    [avgWork, stdWork, covWork, minWork, maxWork, power] = CalculateWorkAndPower(FullName);
-
-    % Store numeric results
-    WnetAvg(k)   = avgWork;
-    WnetStd(k)   = stdWork;
-    WnetCov(k)   = covWork;
-    TminWork(k)  = minWork;
-    TmaxWork(k)  = maxWork;
-    PowerOut(k)  = power;
-
-    % Extract Crank Angle (CA) from filename
-    tokensCA = regexp(files(k).name, 'CA(\d+)-', 'tokens');
-    if ~isempty(tokensCA)
-        CA_vals(k) = str2double(tokensCA{1}{1});
-    else
-        CA_vals(k) = NaN;
+%% Process each fuel
+for fuelIdx = 1:length(fuels)
+    fuel = fuels{fuelIdx};
+    folder = fullfile('Data', fuel);
+    files = dir(fullfile(folder, '*fdaq.txt'));
+    
+    % Initialize result arrays
+    numFiles = length(files);
+    WnetAvg   = zeros(numFiles,1);
+    WnetStd   = zeros(numFiles,1);
+    WnetCov   = zeros(numFiles,1);
+    TminWork  = zeros(numFiles,1);
+    TmaxWork  = zeros(numFiles,1);
+    PowerOut  = zeros(numFiles,1);
+    CA_vals   = zeros(numFiles,1);
+    P_vals    = zeros(numFiles,1);
+    
+    for k = 1:numFiles
+        FullName = fullfile(files(k).folder, files(k).name);
+        
+        fprintf('\n======================================================\n');
+        fprintf('Processing file: %s (%s)\n', files(k).name, fuel);
+        fprintf('======================================================\n');
+        
+        % Run the work & power calculation on this file
+        [avgWork, stdWork, covWork, minWork, maxWork, power] = CalculateWorkAndPower(FullName);
+        
+        % Store numeric results
+        WnetAvg(k)   = avgWork;
+        WnetStd(k)   = stdWork;
+        WnetCov(k)   = covWork;
+        TminWork(k)  = minWork;
+        TmaxWork(k)  = maxWork;
+        PowerOut(k)  = power;
+        
+        % Extract Crank Angle (CA) from filename
+        tokensCA = regexp(files(k).name, 'CA(\d+)-', 'tokens');
+        if ~isempty(tokensCA)
+            CA_vals(k) = -str2double(tokensCA{1}{1}); % Make negative
+        else
+            CA_vals(k) = NaN;
+        end
+        
+        % Extract Percentage from filename
+        tokensP = regexp(files(k).name, '-(\d+)P', 'tokens');
+        if ~isempty(tokensP)
+            P_vals(k) = str2double(tokensP{1}{1});
+        else
+            P_vals(k) = NaN;
+        end
     end
-
-    % Extract Percentage from filename
-    tokensP = regexp(files(k).name, '-(\d+)P', 'tokens');
-    if ~isempty(tokensP)
-        P_vals(k) = str2double(tokensP{1}{1});
-    else
-        P_vals(k) = NaN;
-    end
+    
+    % Sort first by CA (descending since negative), then by Percentage
+    % This will give us increasing values (e.g., -20, -15, -10, -5)
+    [~, sortIdx] = sortrows([CA_vals, P_vals]);
+    
+    CA_vals    = CA_vals(sortIdx);
+    P_vals     = P_vals(sortIdx);
+    WnetAvg    = WnetAvg(sortIdx);
+    WnetStd    = WnetStd(sortIdx);
+    WnetCov    = WnetCov(sortIdx);
+    TminWork   = TminWork(sortIdx);
+    TmaxWork   = TmaxWork(sortIdx);
+    PowerOut   = PowerOut(sortIdx);
+    
+    % Create final table
+    Results = table(CA_vals, P_vals, WnetAvg, WnetStd, WnetCov, TminWork, TmaxWork, PowerOut);
+    Results.Properties.VariableNames = {'CrankAngle','Percentage','WnetAvg','WnetStd','WnetCov','MinWork','MaxWork','PowerOut'};
+    
+    % Store results
+    AllResults{fuelIdx} = Results;
+    
+    % Display
+    disp(' ');
+    disp(['====================== FINAL RESULTS TABLE (' fuel ') ======================']);
+    disp(Results);
 end
 
-% Sort first by CA, then by Percentage
-[~, sortIdx] = sortrows([CA_vals, P_vals]);
-
-CA_vals    = CA_vals(sortIdx);
-P_vals     = P_vals(sortIdx);
-WnetAvg    = WnetAvg(sortIdx);
-WnetStd    = WnetStd(sortIdx);
-WnetCov    = WnetCov(sortIdx);
-TminWork   = TminWork(sortIdx);
-TmaxWork   = TmaxWork(sortIdx);
-PowerOut   = PowerOut(sortIdx);
-
-% Create final table
-Results = table(CA_vals, P_vals, WnetAvg, WnetStd, WnetCov, TminWork, TmaxWork, PowerOut);
-Results.Properties.VariableNames = {'CrankAngle','Percentage','WnetAvg','WnetStd','WnetCov','MinWork','MaxWork','PowerOut'};
-
-% Display
-disp(' ');
-disp(['====================== FINAL RESULTS TABLE (' fuel ') ======================']);
-disp(Results);
+%% --- Plotting results for all fuels ---
+for fuelIdx = 1:length(fuels)
+    fuel = fuels{fuelIdx};
+    Results = AllResults{fuelIdx};
+    
+    uniqueP = unique(Results.Percentage); % all unique percentages
+    figure('Color','white');
+    
+    % --- Plot Net Work ---
+    subplot(2,2,1);
+    hold on;
+    for i = 1:length(uniqueP)
+        idx = Results.Percentage == uniqueP(i);
+        plot(Results.CrankAngle(idx), Results.WnetAvg(idx), '-o', 'LineWidth',1.5);
+    end
+    xlabel('Injection Timing CA [°]');
+    ylabel('Net Work [J]');
+    title('Net Work vs Injection Timing');
+    legend(arrayfun(@(x) sprintf('%d%%',x), uniqueP,'UniformOutput',false),'Location','best');
+    grid on; hold off;
+    
+    % --- Plot Min Work ---
+    subplot(2,2,2);
+    hold on;
+    for i = 1:length(uniqueP)
+        idx = Results.Percentage == uniqueP(i);
+        plot(Results.CrankAngle(idx), Results.MinWork(idx), '-o', 'LineWidth',1.5);
+    end
+    xlabel('Injection Timing CA [°]');
+    ylabel('Min Work [J]');
+    title('Min Work vs Injection Timing');
+    legend(arrayfun(@(x) sprintf('%d%%',x), uniqueP,'UniformOutput',false),'Location','best');
+    grid on; hold off;
+    
+    % --- Plot Max Work ---
+    subplot(2,2,3);
+    hold on;
+    for i = 1:length(uniqueP)
+        idx = Results.Percentage == uniqueP(i);
+        plot(Results.CrankAngle(idx), Results.MaxWork(idx), '-o', 'LineWidth',1.5);
+    end
+    xlabel('Injection Timing CA [°]');
+    ylabel('Max Work [J]');
+    title('Max Work vs Injection Timing');
+    legend(arrayfun(@(x) sprintf('%d%%',x), uniqueP,'UniformOutput',false),'Location','best');
+    grid on; hold off;
+    
+    % --- Plot Power ---
+    subplot(2,2,4);
+    hold on;
+    for i = 1:length(uniqueP)
+        idx = Results.Percentage == uniqueP(i);
+        plot(Results.CrankAngle(idx), Results.PowerOut(idx), '-o', 'LineWidth',1.5);
+    end
+    xlabel('Injection Timing CA [°]');
+    ylabel('Power [W]');
+    title('Power vs Injection Timing');
+    legend(arrayfun(@(x) sprintf('%d%%',x), uniqueP,'UniformOutput',false),'Location','best');
+    grid on; hold off;
+    
+    sgtitle(['Results for Fuel: ' fuel],'FontSize',14); % super-title for all 4 plots
+    
+    %% --- New separate figure: Power with Error Bars ---
+    figure('Color','white');
+    hold on;
+    for i = 1:length(uniqueP)
+        idx = Results.Percentage == uniqueP(i);
+        
+        % Calculate error bars from std dev
+        % Power error = std_work * cycles_per_second
+        RPM = 1500;
+        cycles_per_second = RPM / (2 * 60);
+        powerError = Results.WnetStd(idx) * cycles_per_second;
+        
+        errorbar(Results.CrankAngle(idx), Results.PowerOut(idx), powerError, ...
+                 '-o', 'LineWidth', 1.5, 'MarkerSize', 6, 'CapSize', 8);
+    end
+    xlabel('Injection Timing CA [°]');
+    ylabel('Power [W]');
+    title(['Power vs Injection Timing with Error Bars (±1 STD) - ' fuel]);
+    legend(arrayfun(@(x) sprintf('%d%%',x), uniqueP,'UniformOutput',false),'Location','best');
+    grid on;
+    hold off;
+end
 
 %% --- Function: CalculateWorkAndPower ---
 function [W_net_avg, W_net_std, W_net_cov, minWork, maxWork, power] = CalculateWorkAndPower(FullName)
@@ -131,85 +235,3 @@ fprintf('Minimum work: %.2f J\n', minWork);
 fprintf('Maximum work: %.2f J\n', maxWork);
 fprintf('Power: %.2f W\n', power);
 end
-
-
-%% --- Plotting results ---
-
-uniqueP = unique(Results.Percentage); % all unique percentages
-figure('Color','white');
-
-% --- Plot Net Work ---
-subplot(2,2,1);
-hold on;
-for i = 1:length(uniqueP)
-    idx = Results.Percentage == uniqueP(i);
-    plot(Results.CrankAngle(idx), Results.WnetAvg(idx), '-o', 'LineWidth',1.5);
-end
-xlabel('Crank Angle [°]');
-ylabel('Net Work [J]');
-title('Net Work vs Crank Angle');
-legend(arrayfun(@(x) sprintf('%d%%',x), uniqueP,'UniformOutput',false),'Location','best');
-grid on; hold off;
-
-% --- Plot Min Work ---
-subplot(2,2,2);
-hold on;
-for i = 1:length(uniqueP)
-    idx = Results.Percentage == uniqueP(i);
-    plot(Results.CrankAngle(idx), Results.MinWork(idx), '-o', 'LineWidth',1.5);
-end
-xlabel('Crank Angle [°]');
-ylabel('Min Work [J]');
-title('Min Work vs Crank Angle');
-legend(arrayfun(@(x) sprintf('%d%%',x), uniqueP,'UniformOutput',false),'Location','best');
-grid on; hold off;
-
-% --- Plot Max Work ---
-subplot(2,2,3);
-hold on;
-for i = 1:length(uniqueP)
-    idx = Results.Percentage == uniqueP(i);
-    plot(Results.CrankAngle(idx), Results.MaxWork(idx), '-o', 'LineWidth',1.5);
-end
-xlabel('Crank Angle [°]');
-ylabel('Max Work [J]');
-title('Max Work vs Crank Angle');
-legend(arrayfun(@(x) sprintf('%d%%',x), uniqueP,'UniformOutput',false),'Location','best');
-grid on; hold off;
-
-% --- Plot Power ---
-subplot(2,2,4);
-hold on;
-for i = 1:length(uniqueP)
-    idx = Results.Percentage == uniqueP(i);
-    plot(Results.CrankAngle(idx), Results.PowerOut(idx), '-o', 'LineWidth',1.5);
-end
-xlabel('Crank Angle [°]');
-ylabel('Power [W]');
-title('Power vs Crank Angle');
-legend(arrayfun(@(x) sprintf('%d%%',x), uniqueP,'UniformOutput',false),'Location','best');
-grid on; hold off;
-
-sgtitle(['Results for Fuel: ' fuel],'FontSize',14); % super-title for all 4 plots
-
-%% --- New separate figure: Power with Error Bars ---
-figure('Color','white');
-hold on;
-for i = 1:length(uniqueP)
-    idx = Results.Percentage == uniqueP(i);
-    
-    % Calculate error bars from std dev
-    % Power error = std_work * cycles_per_second
-    RPM = 1500;
-    cycles_per_second = RPM / (2 * 60);
-    powerError = Results.WnetStd(idx) * cycles_per_second;
-    
-    errorbar(Results.CrankAngle(idx), Results.PowerOut(idx), powerError, ...
-             '-o', 'LineWidth', 1.5, 'MarkerSize', 6, 'CapSize', 8);
-end
-xlabel('Crank Angle [°]');
-ylabel('Power [W]');
-title(['Power vs Crank Angle with Error Bars (±1 STD) - ' fuel]);
-legend(arrayfun(@(x) sprintf('%d%%',x), uniqueP,'UniformOutput',false),'Location','best');
-grid on;
-hold off;
