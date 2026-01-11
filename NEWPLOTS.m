@@ -23,7 +23,7 @@ addpath('Data\')
 addpath('Functions\')
 
 % Defining which Fuel to use
-fuels=['Dieselgroup16','HVO',"HVO+Diesel_Blend"];
+fuels=['Dieselgroup22','HVO',"HVO+Diesel_Blend","GTL"];
 
 
 fuelfields=[];
@@ -50,7 +50,7 @@ elseif strcmp(fuel, 'HVO')
     fuel_specfic_AFR_sto = 14.55;
 elseif strcmp(fuel, 'HVO+Diesel_Blend')
     fuel_specfic_AFR_sto = 14.525;
-elseif strcmp(fuel, 'Dieselgroup16')
+elseif strcmp(fuel, 'Dieselgroup22')
     fuel_specfic_AFR_sto = 14.5;
 end
  
@@ -135,21 +135,21 @@ hold on;
 
 % Plot BSNOx
 for i = 1:length(fuelfields)
-
-errorbar(unique_CAs.(fuelfields(i)), avg_BSNOx.(fuelfields(i)), err_BSNOx.(fuelfields(i)), "-o", ...
-    "LineWidth", 2.5, ...
-    "MarkerSize", 8, ...
-    "DisplayName", fuels(i));
+plot(-unique_CAs.(fuelfields(i)), avg_BSNOx.(fuelfields(i)), "-o")
+%errorbar(unique_CAs.(fuelfields(i)), avg_BSNOx.(fuelfields(i)), err_BSNOx.(fuelfields(i)), "-o", ...
+%    "LineWidth", 2.5, ...
+ %   "MarkerSize", 8, ...
+  %  "DisplayName", fuels(i));
 
 end
 hold off;
 
-xlabel("CA [°]");
+xlabel("Injection Timing - CA [°]");
 ylabel("Brake Specific Values [g/kWh]");
-title("All BSNOx vs CA (Averaged over 30-70% Load)");
+title("All BSNOx vs Injection Timing (Averaged over 30-70% Load)");
 grid on;
-legend("Location","best");
-xlim([3 19])
+legend(['Diesel','HVO',"HVO+Diesel Blend","GTL"],"Location","northwest");
+xlim([-19 -3])
 
 
 
@@ -157,19 +157,20 @@ figure;
 hold on;
 for i = 1:length(fuelfields)
 % Plot BSCO2
-errorbar(unique_CAs.(fuelfields(i)), avg_BSCO2.(fuelfields(i)), err_BSCO2.(fuelfields(i)), "-s", ...
-    "LineWidth", 2.5, ...
-    "MarkerSize", 8, ...
-    "DisplayName", fuels(i));
+plot(-unique_CAs.(fuelfields(i)), avg_BSCO2.(fuelfields(i)), "-s")
+%errorbar(unique_CAs.(fuelfields(i)), avg_BSCO2.(fuelfields(i)), err_BSCO2.(fuelfields(i)), "-s", ...
+%    "LineWidth", 2.5, ...
+%    "MarkerSize", 8, ...
+%    "DisplayName", fuels(i));
 end
 hold off;
 
-xlabel("CA [°]");
+xlabel("Injection Timing - CA [°]");
 ylabel("Brake Specific Values [g/kWh]");
-title("All BSCO2 vs CA (Averaged over 30-70% Load)");
+title("All BSCO2 vs Injection Timing (Averaged over 30-70% Load)");
 grid on;
-legend("Location","best");
-xlim([3 19])
+legend(['Diesel','HVO',"HVO+Diesel Blend","GTL"],"Location","northwest");
+xlim([-19 -3])
 
 
 
@@ -177,42 +178,44 @@ figure;
 hold on;
 for i = 1:length(fuelfields)
 % Plot BSCO
-errorbar(unique_CAs.(fuelfields(i)), avg_BSCO.(fuelfields(i)), err_BSCO.(fuelfields(i)), "-^", ...
-    "LineWidth", 2.5, ...
-    "MarkerSize", 8, ...
-    "DisplayName", fuels(i));
+plot(-unique_CAs.(fuelfields(i)), avg_BSCO.(fuelfields(i)), "-^")
+%errorbar(unique_CAs.(fuelfields(i)), avg_BSCO.(fuelfields(i)), err_BSCO.(fuelfields(i)), "-^", ...
+%    "LineWidth", 2.5, ...
+%    "MarkerSize", 8, ...
+%    "DisplayName", fuels(i));
 
 end
 hold off;
 
-xlabel("CA [°]");
+xlabel("Injection Timing - CA [°]");
 ylabel("Brake Specific Values [g/kWh]");
-title("All BSCO vs CA (Averaged over 30-70% Load)");
+title("All BSCO vs Injection Timing (Averaged over 30-70% Load)");
 grid on;
-legend("Location","best");
-xlim([3 19])
+legend(['Diesel','HVO',"HVO+Diesel Blend","GTL"],"Location","northwest");
+xlim([-19 -3])
 
 
 figure;
 hold on;
 for i = 1:length(fuelfields)
 % Plot BSFC
-errorbar(unique_CAs.(fuelfields(i)), avg_BSFC.(fuelfields(i)), err_BSFC.(fuelfields(i)), "-d", ...
-    "LineWidth", 2.5, ...
-    "MarkerSize", 8, ...
-    "DisplayName", fuels(i));
+plot(-unique_CAs.(fuelfields(i)), avg_BSFC.(fuelfields(i)), "-d")
+%errorbar(unique_CAs.(fuelfields(i)), avg_BSFC.(fuelfields(i)), err_BSFC.(fuelfields(i)), "-d", ...
+%    "LineWidth", 2.5, ...
+%    "MarkerSize", 8, ...
+%    "DisplayName", fuels(i));
 
 
 end
 hold off;
 
 
-xlabel("CA [°]");
+xlabel("Injection Timing - CA [°]");
 ylabel("Brake Specific Values [g/kWh]");
-title("All BSFC vs CA (Averaged over 30-70% Load)");
+title("All BSFC vs Injection Timing (Averaged over 30-70% Load)");
 grid on;
-legend("Location","best");
-xlim([3 19])
+legend(['Diesel','HVO',"HVO+Diesel Blend","GTL"],"Location","northwest");
+xlim([-19 -3])
 
 
 

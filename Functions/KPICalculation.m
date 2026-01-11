@@ -21,7 +21,7 @@ elseif strcmp(fuel, 'HVO')
     Q_LHV = 44*10^6;
 elseif strcmp(fuel, 'HVO+Diesel_Blend')
     Q_LHV = 44.3*10^6;
-elseif strcmp(fuel, 'Dieselgroup16')
+elseif strcmp(fuel, 'Dieselgroup22')
     Q_LHV = 44.6*10^6; 
 end
 

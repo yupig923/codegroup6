@@ -10,7 +10,7 @@ Cyl.TDCangle         = 180;
 global Runiv
 Runiv = 8.314;
 
-fuel = 'Dieselgroup22'; % Select the fuel you want to analyse
+fuel = 'HVO'; % Select the fuel you want to analyse
 
 % Find the AFR_sto of the fuel
 if strcmp(fuel, 'Diesel')
@@ -282,3 +282,117 @@ view(45, 20);
 grid on;
 box on;
 set(gca, 'FontSize', 11);
+
+
+clear all;
+
+% Units
+mm      = 1e-3;dm=0.1;
+bara    = 1e5;
+MJ      = 1e6;
+kWhr    = 1000*3600;
+volperc = 0.01; % Emissions are in volume percentages
+ppm     = 1e-6; % Some are in ppm (also a volume- not a mass-fraction)
+g       = 1e-3;
+s       = 1;
+% Engine geom data (check if these are correct)
+Cyl.Bore                = 104*mm;
+Cyl.Stroke              = 85*mm;
+Cyl.CompressionRatio    = 21.5;
+Cyl.ConRod              = 136.5*mm;
+Cyl.TDCangle            = 180;
+addpath('Nasa\')
+addpath('Data\')
+addpath('Functions\')
+global Runiv
+Runiv = 8.314;
+
+% Defining which Fuel to use
+fuels=['Dieselgroup22','HVO',"HVO+Diesel_Blend","GTL"];
+
+% Defining which Injection Timing to use:
+Injection_Timing = 11;
+Load_wanted = 50;
+
+
+comb_data = struct;
+comb_data.aROHR= [];
+comb_data.aHR  = [];
+comb_data.CA10 = [];
+comb_data.CA50 = [];
+comb_data.CA90 = [];
+comb_data.Delay= [];
+comb_data.SOIgnition=[];
+comb_data.CA_num=[];
+comb_data.CA_avg = [];
+
+fuelfields=[];
+unique_CAs=[];
+for i=1:length(fuels)
+fuel=fuels(i);
+Readfile_results=AutoReadFilesFromFuels(fuel);
+Load=Readfile_results. P_vals;
+Ca_exp=Readfile_results.CA_vals;
+index_data = [];
+for g = 1:length(Ca_exp)
+    if fuel == "HVO+Diesel_Blend"
+        index_data = [index_data,6];
+        break
+    end
+    if Ca_exp(g) == Injection_Timing
+        if Load(g) == Load_wanted
+            index_data = [index_data,g];
+        end
+    end
+end
+
+fdaq_data_name  =[Readfile_results.fastfiles(index_data).relpath];
+sdaq_data_name  = [Readfile_results.slowfiles(index_data).relpath];
+emissions_fuel=ReadEmissionsData(fuel);
+
+
+
+% Instead of the file AF_sto
+if strcmp(fuel, 'Diesel')
+    fuel_specfic_AFR_sto = 14.5;
+elseif strcmp(fuel, 'GTL')
+    fuel_specfic_AFR_sto = 14.7;
+elseif strcmp(fuel, 'GTL+Diesel_Blend')
+    fuel_specfic_AFR_sto = 14.6;
+elseif strcmp(fuel, 'HVO')
+    fuel_specfic_AFR_sto = 14.55;
+elseif strcmp(fuel, 'HVO+Diesel_Blend')
+    fuel_specfic_AFR_sto = 14.525;
+elseif strcmp(fuel, 'Dieselgroup22')
+    fuel_specfic_AFR_sto = 14.5;
+end
+
+data = Data_Extraction(fdaq_data_name,sdaq_data_name);
+[aROHR, aHR, CA10, CA50, CA90, SOIgnition] = comb_func(data,emissions_fuel(index_data),fuel_specfic_AFR_sto);
+
+
+    comb_data.aROHR(:,i) = aROHR;
+    comb_data.aHR(:,i) = aHR;
+    comb_data.CA10(i) =CA10;
+    comb_data.CA50(i) =CA50;
+    comb_data.CA90(i) =CA90;
+    comb_data.SOIgnition(i)=SOIgnition;
+    CA_num = Readfile_results.CA_vals(i);
+    Power  = Readfile_results.P_vals(i);
+    comb_data.CA_num(i)=CA_num;
+    comb_data.Delay(:,i) = SOIgnition + CA_num;
+    comb_data.CA_avg(:,i) = data.Ca_avg;
+
+
+end
+
+figure;
+
+plot(comb_data.CA_avg,comb_data.aROHR, 'LineWidth', 1.5)
+    xlim([-15 40])
+    xlabel('CA [°]'); ylabel('aROHR [J]');
+    title('apparent Rate of Heat Release vs CA');
+    legend(['Diesel','HVO',"HVO+Diesel Blend","GTL"],"Location","northwest");
+figure;
+plot(comb_data.CA_avg,comb_data.aHR)
+xlim([-15 40])
