@@ -1,13 +1,7 @@
 clear all; clc;close all;
 
-%% Process all .txt files in Data/HVO
-fuel = 'HVO+Diesel_Blend';
-folder = fullfile('Data',fuel);
-files = dir(fullfile(folder, '*fdaq.txt'));
-
-
 %% Define all fuels to process
-fuels = {'Dieselgroup22', 'HVO', 'HVO+Diesel_Blend', 'GTL'};
+fuels = {'Dieselgroup22', 'HVO', 'HVO+Diesel_Blend'};
 
 % Store all results in a cell array
 AllResults = cell(length(fuels), 1);
@@ -174,6 +168,47 @@ for fuelIdx = 1:length(fuels)
     grid on;
     hold off;
 end
+
+%% --- Combined figure: Power with Error Bars for Dieselgroup22 and HVO only ---
+figure('Color','white');
+hold on;
+
+% Define colors for each fuel
+fuelColors = lines(2);
+
+% Define marker styles
+markers = {'o', 's'}; % circle, square
+
+% Only plot first two fuels (Dieselgroup22 and HVO)
+for fuelIdx = 1:2
+    fuel = fuels{fuelIdx};
+    Results = AllResults{fuelIdx};
+    uniqueP = unique(Results.Percentage);
+    
+    for i = 1:length(uniqueP)
+        idx = Results.Percentage == uniqueP(i);
+        
+        % Calculate error bars from std dev
+        RPM = 1500;
+        cycles_per_second = RPM / (2 * 60);
+        powerError = Results.WnetStd(idx) * cycles_per_second;
+        
+        % Create label for legend
+        legendLabel = sprintf('%s - %d%%', fuel, uniqueP(i));
+        
+        errorbar(Results.CrankAngle(idx), Results.PowerOut(idx), powerError, ...
+                 '-', 'Marker', markers{fuelIdx}, 'LineWidth', 1.5, ...
+                 'MarkerSize', 6, 'CapSize', 8, 'Color', fuelColors(fuelIdx,:), ...
+                 'DisplayName', legendLabel);
+    end
+end
+
+xlabel('Injection Timing CA [°]');
+ylabel('Power [W]');
+title('Power vs Injection Timing with Error Bars (±1 STD) - Dieselgroup22 vs HVO');
+legend('Location','best');
+grid on;
+hold off;
 
 %% --- Function: CalculateWorkAndPower ---
 function [W_net_avg, W_net_std, W_net_cov, minWork, maxWork, power] = CalculateWorkAndPower(FullName)
