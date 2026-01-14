@@ -13,7 +13,7 @@ function [BSem] = KPICalculation(emissions,AFR_sto,FUEL_m_flow,Power,fuel)
 % instead of the file Q_LHV
 if strcmp(fuel, 'Diesel')
     Q_LHV = 44.6*10^6; 
-elseif strcmp(fuel, 'GTL')
+elseif strcmp(fuel, 'GTL_new')
     Q_LHV = 44.06*10^6;
 elseif strcmp(fuel, 'GTL+Diesel_Blend')
     Q_LHV = 44.33*10^6;

@@ -23,7 +23,7 @@ addpath('Data\')
 addpath('Functions\')
 
 % Defining which Fuel to use
-fuels=['Dieselgroup22','HVO',"HVO+Diesel_Blend","GTL"];
+fuels=['Dieselgroup22','HVO',"HVO+Diesel_Blend","GTL_new"];
 
 
 fuelfields=[];
@@ -42,7 +42,7 @@ emissions_fuel=ReadEmissionsData(fuel);
 % Instead of the file AF_sto
 if strcmp(fuel, 'Diesel')
     fuel_specfic_AFR_sto = 14.5;
-elseif strcmp(fuel, 'GTL')
+elseif strcmp(fuel, 'GTL_new')
     fuel_specfic_AFR_sto = 14.7;
 elseif strcmp(fuel, 'GTL+Diesel_Blend')
     fuel_specfic_AFR_sto = 14.6;

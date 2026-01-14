@@ -377,8 +377,8 @@ data = Data_Extraction(fdaq_data_name,sdaq_data_name);
     comb_data.CA50(i) =CA50;
     comb_data.CA90(i) =CA90;
     comb_data.SOIgnition(i)=SOIgnition;
-    CA_num = Readfile_results.CA_vals(i);
-    Power  = Readfile_results.P_vals(i);
+    CA_num = Readfile_results.CA_vals(index_data);
+    Power  = Readfile_results.P_vals(index_data);
     comb_data.CA_num(i)=CA_num;
     comb_data.Delay(:,i) = SOIgnition + CA_num;
     comb_data.CA_avg(:,i) = data.Ca_avg;
@@ -393,6 +393,6 @@ plot(comb_data.CA_avg,comb_data.aROHR, 'LineWidth', 1.5)
     xlabel('CA [°]'); ylabel('aROHR [J]');
     title('apparent Rate of Heat Release vs CA');
     legend(['Diesel','HVO',"HVO+Diesel Blend","GTL"],"Location","northwest");
-figure;
-plot(comb_data.CA_avg,comb_data.aHR)
-xlim([-15 40])
+    grid on
+
+comb_data.Delay
