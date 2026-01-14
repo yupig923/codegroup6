@@ -1,4 +1,11 @@
 clear all; clc;close all;
+<<<<<<< Updated upstream
+=======
+%% Process all .txt files in Data/HVO
+fuel = 'Dieselg16_power';
+folder = fullfile('Data',fuel);
+files = dir(fullfile(folder, '*fdaq.txt'));
+>>>>>>> Stashed changes
 
 %% Define all fuels to process
 fuels = {'Dieselgroup22', 'HVO', 'HVO+Diesel_Blend'};

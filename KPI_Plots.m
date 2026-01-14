@@ -91,7 +91,7 @@ ylabel("BSNOx [g/kWh]");
 title("Brake Specific NOx vs CA");
 grid on;
 legend("Location","best");
-xlim([3 19])
+xlim([14 19])
 
 
 %% Plot BSCO2
@@ -116,7 +116,7 @@ ylabel("BSCO2 [g/kWh]");
 title("Brake Specific CO2 vs CA");
 grid on;
 legend("Location","best");
-xlim([3 19])
+xlim([14 19])
 
 %% Plot BSCO
 figure;
@@ -140,7 +140,7 @@ ylabel("BSCO [g/kWh]");
 title("Brake Specific CO vs CA");
 grid on;
 legend("Location","best");
-xlim([3 19])
+xlim([14 19])
 
 %% Plot BSFC
 figure;
@@ -164,7 +164,7 @@ ylabel("BSFC [g/kWh]");
 title("Brake Specific Fuel Consumption vs CA");
 grid on;
 legend("Location","best");
-xlim([3 19])
+xlim([14 19])
 
 
 %% Plot BSeff
@@ -189,7 +189,7 @@ ylabel("efficiency [-]");
 title("Efficiency vs CA");
 grid on;
 legend("Location","best");
-xlim([3 19])
+xlim([14 19])
 
 
 %% Calculate averaged values and error bars
@@ -273,7 +273,7 @@ ylabel("Brake Specific Values [g/kWh]");
 title("All BS KPIs vs CA (Averaged over 30-70% Load)");
 grid on;
 legend("Location","best");
-xlim([3 19])
+xlim([14 19])
 
 % Table 1: BS KPIs (without efficiency)
 Averaged_Results = table(unique_CA, ...
@@ -352,7 +352,7 @@ ylabel("Efficiency [-]");
 title("Efficiency vs CA (Averaged over 30-70% Load)");
 grid on;
 legend("Location","best");
-xlim([3 19])
+xlim([14 19])
 
 
 
