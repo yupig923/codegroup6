@@ -2,7 +2,7 @@ function [Cp,Cv,H,E] = ThermoMix(Y,T,Sp)
 global Runiv
 
 Tsize = size(T);
-T = T(:).';                % flatten
+T = T(:).';               
 nT = numel(T);
 nSp = length(Sp);
 

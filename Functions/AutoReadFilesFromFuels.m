@@ -11,8 +11,6 @@ function read_file_results = AutoReadFilesFromFuels(fuel)
 %CA
 %Load
 
-
-% Build folder path
 folder = fullfile('Data', fuel);
 
 % Load files
@@ -34,7 +32,7 @@ P_vals   = zeros(numFiles,1);
 
 % Extract CA and P from filenames
 for k = 1:numFiles
-    % Extract CA (e.g., "CA50-")
+    % Extract CA
     tokensCA = regexp(fastfiles(k).name, 'CA(\d+)-', 'tokens');
     if ~isempty(tokensCA)
         CA_vals(k) = str2double(tokensCA{1}{1});
@@ -42,7 +40,7 @@ for k = 1:numFiles
         CA_vals(k) = NaN;
     end
 
-    % Extract Percent (e.g., "-20P")
+    % Extract Percent
     tokensP = regexp(fastfiles(k).name, '-(\d+)P', 'tokens');
     if ~isempty(tokensP)
         P_vals(k) = str2double(tokensP{1}{1});
@@ -51,7 +49,7 @@ for k = 1:numFiles
     end
 end
 
-% Sort by CA → P
+% Sort by CA then P
 [~, idx] = sortrows([CA_vals, P_vals]);
 
 fastfiles = fastfiles(idx);
@@ -59,7 +57,7 @@ slowfiles = slowfiles(idx);
 CA_vals   = CA_vals(idx);
 P_vals    = P_vals(idx);
 
-% Package output cleanly in a struct
+% Put everything in a struct
 read_file_results.fastfiles = fastfiles;
 read_file_results.slowfiles = slowfiles;
 read_file_results.CA_vals   = CA_vals;

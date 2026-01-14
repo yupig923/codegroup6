@@ -28,7 +28,7 @@ Ncycles         = Nrows/NdatapointsperCycle;
 dataIn_sdaq     = table2array(readtable(Filename_sdaq))';
 [~,Ncolomns]    = size(dataIn_sdaq);
 
-% check if the Data belong to eachother
+% check if the Data is correct
 if Ncycles ~= Ncolomns
     fprintf("Error in the Data_Extraction Function. Amount of Measurements do not match for the given Data files")
 end
@@ -51,7 +51,6 @@ p_int = data.Intake_p * 1e5;     % [Pa]
 Ca = data.Ca;  
 p  = data.p;
 
-% TDC is defined as 0 deg
 TDCangle = 180;          
 BDC_angle = TDCangle + 180; 
 

@@ -49,6 +49,7 @@ CO2_m_flow = (CO2_molarmass * emissions.CO2 * Exhaust_mass_flow)/AIR_molarmass;
  O2_m_flow = ( O2_molarmass * emissions.O2  * Exhaust_mass_flow)/AIR_molarmass;
 NOx_m_flow = (NOx_molarmass * emissions.NOx * Exhaust_mass_flow)/AIR_molarmass;
 
+% Put in a struct
 BSem = struct();
 BSem.BSFC  =FUEL_m_flow*kgperJ_to_gperkWh/Power;
 BSem.BSCO  =  CO_m_flow*kgperJ_to_gperkWh/Power;
