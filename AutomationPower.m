@@ -206,7 +206,7 @@ end
 xlabel('Injection Timing CA [°]');
 ylabel('Power [W]');
 title('Power vs Injection Timing with Error Bars (±1 STD) - Dieselgroup22 vs HVO');
-legend('Location','best');
+legend('Location','southeast');
 grid on;
 hold off;
 
