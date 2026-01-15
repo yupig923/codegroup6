@@ -1,7 +1,3 @@
-% This template is used as a clean start for if anyone wants to make a code
-% for a specific purpose (like plotting graphs). All the Important data is
-% already put in here.
-
 clear all; clc;close all;
 % Units
 mm      = 1e-3;dm=0.1;
