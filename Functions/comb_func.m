@@ -1,4 +1,19 @@
 function [aROHR, aHR, CA10, CA50, CA90, SOIgnition] = comb_func(data,emissions,AFR_sto)
+% Computes all the combustion characteristics data
+%
+% Inputs:
+%   data : The data struct made by Data_Extraction.m
+%   emissions : The emissions struct made by ReadEmissionsData.m
+%   AFR_sto : the stoichiometric Air to Fuel ratio
+%
+% Output:
+%   aROHR : array containing apparent Rate of Heat Release
+%   aHR : array containing apparent Heat Release
+%   CA10 : array containing the CA10
+%   CA50 : array containing the CA50
+%   CA90 : array containing the CA90
+%   SOIgnition : array containing the Start of Ignition
+
 mm      = 1e-3; 
 bara    = 1e5;
 Cyl.Bore             = 104*mm;

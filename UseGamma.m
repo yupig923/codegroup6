@@ -1,7 +1,7 @@
 clc; clear all; close all;
 % Plotting gamma and show how to work with i
 
-fuel = 'Dieselgroup16';
+fuel = 'HVO';
 emissions = ReadEmissionsData(fuel);
 
 %Nasa Poly
@@ -41,26 +41,7 @@ tic
 gammalist = gammafunc(emissions(1),fuel_specfic_AFR_sto,data.AVG_fuel_m_flow,data.p_filt,data.Ca);
 toc
 
-figure
-%plot(data.Ca,Temperature)
-xlabel('Crank angle [deg]')
-ylabel('Temperature')
-xlim([-90,180])
-title("Temperature over the Crank Angle")
-grid on
-figure
-hold on
-plot(data.Ca,data.p,Color="r")
-plot(data.Ca,data.p_filt,Color="g")
-hold off
-xlabel('Crank angle [deg]')
-ylabel('Pressure')
-grid on
-figure
-%plot(data.Ca,Volume)
-xlabel('Crank angle [deg]')
-ylabel('Volume of the cylinder')
-grid on
+
 figure;
 hold on
 for y = 1:1
@@ -72,6 +53,3 @@ ylabel('Gamma [\gamma]')
 xlim([-90,180])
 grid on
 title("Gamma over the Crank Angle")
-
-figure
-%scatter(Temperature,gammalist)
