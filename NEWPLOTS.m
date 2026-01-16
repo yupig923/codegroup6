@@ -19,7 +19,7 @@ addpath('Data\')
 addpath('Functions\')
 
 % Defining which Fuel to use
-fuels=['Dieselgroup22','HVO',"HVO+Diesel_Blend","GTL_new"];
+fuels=['Dieselgroup22','HVO',"HVO+Diesel_Blend"];
 
 
 fuelfields=[];
@@ -144,7 +144,7 @@ xlabel("Injection Timing - CA [°]");
 ylabel("Brake Specific Values [g/kWh]");
 title("All BSNOx vs Injection Timing (Averaged over 30-70% Load)");
 grid on;
-legend(['Diesel','HVO',"HVO+Diesel Blend","GTL"],"Location","northwest");
+legend(['Diesel','HVO',"HVO+Diesel Blend"],"Location","northwest");
 xlim([-19 -3])
 
 
@@ -165,7 +165,7 @@ xlabel("Injection Timing - CA [°]");
 ylabel("Brake Specific Values [g/kWh]");
 title("All BSCO2 vs Injection Timing (Averaged over 30-70% Load)");
 grid on;
-legend(['Diesel','HVO',"HVO+Diesel Blend","GTL"],"Location","northwest");
+legend(['Diesel','HVO',"HVO+Diesel Blend"],"Location","northwest");
 xlim([-19 -3])
 
 
@@ -187,7 +187,7 @@ xlabel("Injection Timing - CA [°]");
 ylabel("Brake Specific Values [g/kWh]");
 title("All BSCO vs Injection Timing (Averaged over 30-70% Load)");
 grid on;
-legend(['Diesel','HVO',"HVO+Diesel Blend","GTL"],"Location","northwest");
+legend(['Diesel','HVO',"HVO+Diesel Blend"],"Location","northwest");
 xlim([-19 -3])
 
 
@@ -210,7 +210,7 @@ xlabel("Injection Timing - CA [°]");
 ylabel("Brake Specific Values [g/kWh]");
 title("All BSFC vs Injection Timing (Averaged over 30-70% Load)");
 grid on;
-legend(['Diesel','HVO',"HVO+Diesel Blend","GTL"],"Location","northwest");
+legend(['Diesel','HVO',"HVO+Diesel Blend"],"Location","northwest");
 xlim([-19 -3])
 
 

@@ -1,5 +1,7 @@
 clear all; clc;close all;
-
+addpath('Nasa\')
+addpath('Data\')
+addpath('Functions\')
 %% Process all .txt files in Data/HVO
 fuel = 'Dieselg16_power';
 folder = fullfile('Data',fuel);

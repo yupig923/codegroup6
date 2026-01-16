@@ -3,7 +3,9 @@ clc; clear all; close all;
 
 fuel = 'HVO';
 emissions = ReadEmissionsData(fuel);
-
+addpath('Nasa\')
+addpath('Data\')
+addpath('Functions\')
 %Nasa Poly
 global Runiv
 Runiv = 8.314;
