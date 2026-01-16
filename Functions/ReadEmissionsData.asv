@@ -1,5 +1,5 @@
 function [emissions_data]=ReadEmissionsData(fuel)
-% ReadEmissionData Imports and processes engine emission measurements from a text file.
+% READEMISSIONSDATA Imports and processes engine emission measurements from a text file.
 %
 %   This function locates an 'emissions.txt' file within the data subfolder,
 %   reads the raw data into a table, sorts it by Crank Angle (CA) and Load, 
