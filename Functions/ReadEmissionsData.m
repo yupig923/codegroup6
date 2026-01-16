@@ -6,16 +6,16 @@ function [emissions_data]=ReadEmissionsData(fuel)
 %   and performs unit conversions from volume percentages and ppm to decimals.
 %
 %   INPUT:
-%       fuel name
+%       fuel - fuel name
 %
 %   OUTPUT:
 %       emissions_data - A 1xN structure array containing normalized data:
-%           .CO     : Carbon Monoxide (mole fraction)
-%           .CO2    : Carbon Dioxide (mole fraction)
-%           .HC     : Unburned Hydrocarbons (mole fraction)
-%           .O2     : Oxygen (mole fraction)
-%           .NOx    : Nitrogen Oxides (mole fraction)
-%           .lambda : Air-fuel equivalence ratio
+%           CO     : Carbon Monoxide (mole fraction)
+%           CO2    : Carbon Dioxide (mole fraction)
+%           HC     : Unburned Hydrocarbons (mole fraction)
+%           O2     : Oxygen (mole fraction)
+%           NOx    : Nitrogen Oxides (mole fraction)
+%           lambda : Air-fuel equivalence ratio
 
 volperc = 0.01; % Emissions are in volume percentages
 ppm     = 1e-6;
