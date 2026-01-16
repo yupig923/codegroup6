@@ -1,5 +1,11 @@
 clear all; clc;close all;
 
+%% Process all .txt files in Data/HVO
+fuel = 'Dieselg16_power';
+folder = fullfile('Data',fuel);
+files = dir(fullfile(folder, '*fdaq.txt'));
+
+
 %% Define all fuels to process
 fuels = {'Dieselgroup22', 'HVO', 'HVO+Diesel_Blend'};
 
@@ -59,7 +65,6 @@ for fuelIdx = 1:length(fuels)
     end
     
     % Sort first by CA (descending since negative), then by Percentage
-    % This will give us increasing values (e.g., -20, -15, -10, -5)
     [~, sortIdx] = sortrows([CA_vals, P_vals]);
     
     CA_vals    = CA_vals(sortIdx);
@@ -84,7 +89,7 @@ for fuelIdx = 1:length(fuels)
     disp(Results);
 end
 
-%% --- Plotting results for all fuels ---
+%% Plotting results for all fuels 
 for fuelIdx = 1:length(fuels)
     fuel = fuels{fuelIdx};
     Results = AllResults{fuelIdx};
@@ -146,7 +151,7 @@ for fuelIdx = 1:length(fuels)
     
     sgtitle(['Results for Fuel: ' fuel],'FontSize',14); % super-title for all 4 plots
     
-    %% --- New separate figure: Power with Error Bars ---
+    %%  New separate figure: Power with Error Bars 
     figure('Color','white');
     hold on;
     for i = 1:length(uniqueP)
@@ -169,17 +174,16 @@ for fuelIdx = 1:length(fuels)
     hold off;
 end
 
-%% --- Combined figure: Power with Error Bars for Dieselgroup22 and HVO only ---
+%% Combined figure: Power with 1std dev error bars 
 figure('Color','white');
 hold on;
 
 % Define colors for each fuel
 fuelColors = lines(2);
 
-% Define marker styles
 markers = {'o', 's'}; % circle, square
 
-% Only plot first two fuels (Dieselgroup22 and HVO)
+% Only plot first two fuels 
 for fuelIdx = 1:2
     fuel = fuels{fuelIdx};
     Results = AllResults{fuelIdx};
@@ -206,7 +210,7 @@ end
 xlabel('Injection Timing CA [°]');
 ylabel('Power [W]');
 title('Power vs Injection Timing with Error Bars (±1 STD) - Dieselgroup22 vs HVO');
-legend('Location','best');
+legend('Location','southeast');
 grid on;
 hold off;
 
@@ -234,7 +238,7 @@ Ncycles = Nrows / NdatapointsperCycle;
 Ca = reshape(dataIn(:,1),[],Ncycles);
 p  = reshape(dataIn(:,2),[],Ncycles) * bara;
 
-%% Calculate Work for ALL cycles
+%% Calculate Work for all cycles
 W_net_all = zeros(1, Ncycles);
 
 for i = 1:Ncycles
@@ -242,7 +246,7 @@ for i = 1:Ncycles
     W_net_all(i) = trapz(V_cycle, p(:,i));
 end
 
-%% REMOVE FIRST CYCLE FROM CALCULATIONS
+%% REMOVE FIRST CYCLE
 if Ncycles > 1
     W_net_used = W_net_all(2:end);   % <--- ignore first cycle
 else
@@ -250,7 +254,7 @@ else
     W_net_used = W_net_all;
 end
 
-%% Stats (use W_net_used instead of W_net_all)
+%% use W_net_used instead of W_net_all
 W_net_avg = mean(W_net_used);
 W_net_std = std(W_net_used);
 W_net_cov = (W_net_std / W_net_avg) * 100;
@@ -262,7 +266,7 @@ power = W_net_avg * cycles_per_second;
 minWork = min(W_net_used);
 maxWork = max(W_net_used);
 
-%% Print results
+%% results
 fprintf('Average net work per cycle (excluding 1st): %.2f J\n', W_net_avg);
 fprintf('Standard deviation: %.2f J\n', W_net_std);
 fprintf('Coefficient of variation: %.1f%%\n', W_net_cov);
