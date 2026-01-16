@@ -10,7 +10,7 @@ Cyl.TDCangle         = 180;
 global Runiv
 Runiv = 8.314;
 
-fuel = 'HVO'; % Select the fuel you want to analyse
+fuel = 'Dieselgroup22'; % Select the fuel you want to analyse
 
 % Find the AFR_sto of the fuel
 if strcmp(fuel, 'Diesel')
@@ -308,7 +308,7 @@ global Runiv
 Runiv = 8.314;
 
 % Defining which Fuel to use
-fuels=['Dieselgroup22','HVO',"HVO+Diesel_Blend","GTL"];
+fuels= ["Dieselgroup22","HVO","HVO+Diesel_Blend"];
 
 % Defining which Injection Timing to use:
 Injection_Timing = 11;
@@ -331,17 +331,18 @@ unique_CAs=[];
 for i=1:length(fuels)
 fuel=fuels(i);
 Readfile_results=AutoReadFilesFromFuels(fuel);
-Load=Readfile_results. P_vals;
+Load=Readfile_results.P_vals;
 Ca_exp=Readfile_results.CA_vals;
-index_data = [];
+index_data = 0;
 for g = 1:length(Ca_exp)
     if fuel == "HVO+Diesel_Blend"
-        index_data = [index_data,6];
+        index_data = 6;
         break
     end
     if Ca_exp(g) == Injection_Timing
         if Load(g) == Load_wanted
-            index_data = [index_data,g];
+            index_data = g;
+            break
         end
     end
 end
@@ -380,6 +381,7 @@ data = Data_Extraction(fdaq_data_name,sdaq_data_name);
     CA_num = Readfile_results.CA_vals(index_data);
     Power  = Readfile_results.P_vals(index_data);
     comb_data.CA_num(i)=CA_num;
+    comb_data.Power(i) = Power;
     comb_data.Delay(:,i) = SOIgnition + CA_num;
     comb_data.CA_avg(:,i) = data.Ca_avg;
 
@@ -392,7 +394,25 @@ plot(comb_data.CA_avg,comb_data.aROHR, 'LineWidth', 1.5)
     xlim([-15 40])
     xlabel('CA [°]'); ylabel('aROHR [J]');
     title('apparent Rate of Heat Release vs CA');
-    legend(['Diesel','HVO',"HVO+Diesel Blend","GTL"],"Location","northwest");
+    legend(['Diesel','HVO',"HVO+Diesel Blend"],"Location","northwest");
     grid on
 
-comb_data.Delay
+figure;
+plot(comb_data.CA_avg,comb_data.aHR)
+    xlim([-15 40])
+    xlabel('CA [°]'); ylabel('aROHR [J]');
+    title('apparent Rate of Heat Release vs CA');
+    legend(['Diesel','HVO',"HVO+Diesel Blend"],"Location","northwest");
+    grid on
+
+%% Print Results
+
+% Create final table
+Results = table(["Diesel","HVO","HVO+Diesel_Blend"]',comb_data.Power',round(comb_data.CA_num',1),round(comb_data.CA10',1),round(comb_data.CA50',1),round(comb_data.CA90',1),comb_data.SOIgnition',comb_data.Delay');
+Results.Properties.VariableNames = {'fuel','Percentage','Injection','CA10','CA50','CA90','Ignition','Delay'};
+
+% Display
+disp(' ');
+disp(['========================== FINAL RESULTS TABLE ===========================']);
+disp( '====================== All the angles are in ATDC ========================' );
+disp(Results);
